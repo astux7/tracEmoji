@@ -1,0 +1,33 @@
+package com.basta.guessemoji.navigation
+
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.navigation.NavController
+import androidx.navigation.NavGraphBuilder
+import androidx.navigation.compose.composable
+import com.basta.guessemoji.presentation.HomePage
+import com.basta.guessemoji.presentation.earn.EarnPage
+import com.basta.guessemoji.presentation.game.Game1Page
+import com.basta.guessemoji.presentation.play.PlayPage
+import com.basta.guessemoji.presentation.settings.SettingsPage
+
+fun NavGraphBuilder.buildTheGraph(navController: NavController, padding: PaddingValues) {
+    composable(Directions.home.name) {
+        HomePage(navController, padding)
+    }
+
+    composable(Directions.settings.name) {
+        SettingsPage(navController, padding)
+    }
+
+    composable(Directions.earn.name) {
+        EarnPage(navController, padding)
+    }
+
+    composable(Directions.play.name) {
+        PlayPage(navController, padding)
+    }
+
+    composable(Directions.game1.name) {
+        Game1Page(navController, padding)
+    }
+}

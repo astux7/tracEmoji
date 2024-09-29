@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">TracEmoji</string>
+    <string name="app_version_label">Version %s</string>
+    <string name="settings_label">Settings</string>
+    <string name="play_label">Play</string>
+    <string name="credits_label">Credits</string>
+    <string name="earn_label">Earn</string>
+    <string name="privacy_policy_label">🛡️ Privacy Policy</string>
+    <string name="arrow_label">Arrow right</string>
+    <string name="reward_ad_one">ca-app-pub-5590715197528572/2337986435</string>
+    <string name="reward_ad_two">ca-app-pub-5590715197528572/3267924728</string>
+    <string name="reward_ad_three">ca-app-pub-5590715197528572/5738175396</string>
+</resources>
