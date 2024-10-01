@@ -1,6 +1,7 @@
 package com.basta.guessemoji.di
 
 import com.basta.guessemoji.data.UserPreferenceRepositoryImp
+import com.basta.guessemoji.presentation.game.GameViewModel
 import com.basta.guessemoji.presentation.settings.SettingsViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.module.Module
@@ -21,6 +22,7 @@ object KoinModule {
     private val viewModelModule: Module
         get() = module {
             viewModel { SettingsViewModel() }
+            viewModel { GameViewModel() }
         }
 
     private val dataModule: Module

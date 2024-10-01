@@ -4,6 +4,7 @@ import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
@@ -42,6 +43,7 @@ val GameColorPalette = listOf(
     Color(0xFF00BFFF), // Deep Sky Blue
     Color(0xFFB22222), // Firebrick Red
     Color(0xFFFFFFF0), // Moonlight White
+    Color(0xFFFF5722), // Moonlight White
 )
 
 private val DarkColorScheme = darkColorScheme(
@@ -61,21 +63,13 @@ private val DarkColorScheme = darkColorScheme(
 //    onError = Color.White
 )
 val borderColor = GameColorPalette[1] // Purple for the border
-
-private val LightColorScheme = lightColorScheme(
-    primary = Purple40,
-    secondary = PurpleGrey40,
-    tertiary = Pink40
-)
+val clockColor = GameColorPalette.last() // Purple for the border
 
 @Composable
 fun MyApplicationTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    // Dynamic color is available on Android 12+
-    dynamicColor: Boolean = true,
     content: @Composable () -> Unit
 ) {
-    val view = LocalView.current
     MaterialTheme(
         colorScheme = DarkColorScheme,
         typography = Typography,

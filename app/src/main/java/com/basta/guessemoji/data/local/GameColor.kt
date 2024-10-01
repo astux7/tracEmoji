@@ -13,7 +13,6 @@ object GameColor {
                 "\uD83C\uDF33",
                 "\uD83C\uDF35",
                 "\uD83C\uDF47",
-                "🍇",
                 "🍉",
                 "🍒",
                 "🍆",
