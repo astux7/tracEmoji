@@ -16,6 +16,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -27,13 +29,14 @@ fun TextBoxWithIcon(modifier: Modifier, text: String, emoji: String, action: (()
     Box(
         modifier = modifier
             .padding(16.dp)
-            .aspectRatio(1f)
-            .clickable { action?.invoke() }
+
             .border(
                 BorderStroke(2.dp, borderColor),
                 shape = RoundedCornerShape(16.dp)
-            ) // 2px border
-            .padding(8.dp),
+            )
+            .clip(RoundedCornerShape(16.dp))
+            .aspectRatio(1f)
+            .clickable { action?.invoke() },
         contentAlignment = Alignment.Center
     ) {
         Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {

@@ -8,9 +8,9 @@ interface NavigationCommand {
 }
 
 object Directions {
-    val home = object : NavigationCommand {
+    val menu = object : NavigationCommand {
         override val name: String
-            get() = "home"
+            get() = "menu"
         override val arguments: List<NamedNavArgument>
             get() = emptyList()
 //                listOf(

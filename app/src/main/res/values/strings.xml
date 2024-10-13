@@ -3,11 +3,14 @@
     <string name="app_version_label">Version %s</string>
     <string name="settings_label">Settings</string>
     <string name="play_label">Play</string>
+    <string name="go_label">Go go go</string>
+    <string name="next_label">Next</string>
     <string name="credits_label">Credits</string>
     <string name="earn_label">Earn</string>
     <string name="privacy_policy_label">🛡️ Privacy Policy</string>
     <string name="arrow_label">Arrow right</string>
-    <string name="game_one_color_description">Pick a color that isn\'t in the emojis below.</string>
+    <string name="game_one_color_description">Pick ONE of FOUR colours \n\n 🟨 🟦 🟥 🟩\n\n that is NOT in the displayed emojis.\n</string>
+    <string name="game_one_color_description_title">💡 Remember 💡</string>
     <string name="reward_ad_one">ca-app-pub-5590715197528572/2337986435</string>
     <string name="reward_ad_two">ca-app-pub-5590715197528572/3267924728</string>
     <string name="reward_ad_three">ca-app-pub-5590715197528572/5738175396</string>

@@ -18,7 +18,7 @@ import com.basta.guessemoji.navigation.Directions
 // TraceMoji
 
 @Composable
-fun HomePage(
+fun MenuPage(
     navController: NavController = NavController(LocalContext.current),
     paddingValues: PaddingValues
 ) {
@@ -32,7 +32,7 @@ fun HomePage(
                 Modifier.weight(1f),
                 verticalArrangement = Arrangement.Center,
             ) {
-                TextBoxWithIcon(Modifier.fillMaxWidth(), "Play", "\uD83C\uDFAE") {
+                TextBoxWithIcon(Modifier.fillMaxWidth(), "Back", "⬅\uFE0F") {
                     navController.navigate(Directions.play.name)
                 }
                 TextBoxWithIcon(Modifier.fillMaxWidth(), "Earn", "\uD83C\uDF81") {
@@ -55,3 +55,7 @@ fun HomePage(
         }
     }
 }
+
+// extend timer +5s
+// skip level
+// open 1 emoji which user chooses

@@ -4,15 +4,15 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import com.basta.guessemoji.presentation.HomePage
+import com.basta.guessemoji.presentation.MenuPage
 import com.basta.guessemoji.presentation.earn.EarnPage
 import com.basta.guessemoji.presentation.game.Game1Page
 import com.basta.guessemoji.presentation.play.PlayPage
 import com.basta.guessemoji.presentation.settings.SettingsPage
 
 fun NavGraphBuilder.buildTheGraph(navController: NavController, padding: PaddingValues) {
-    composable(Directions.home.name) {
-        HomePage(navController, padding)
+    composable(Directions.menu.name) {
+        MenuPage(navController, padding)
     }
 
     composable(Directions.settings.name) {

@@ -64,7 +64,7 @@ private val DarkColorScheme = darkColorScheme(
 )
 val borderColor = GameColorPalette[1] // Purple for the border
 val clockColor = GameColorPalette.last() // Purple for the border
-
+val MenuColor = GameColorPalette[5]
 @Composable
 fun MyApplicationTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
