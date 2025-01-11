@@ -6,19 +6,22 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
+import com.basta.guessemoji.domain.model.CreditType
 import com.basta.guessemoji.domain.model.GameEntry
+import com.basta.guessemoji.presentation.UserUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
 class GameViewModel(
-    private val useCase: GameUseCase
+    private val gameUseCase: GameUseCase,
+    private val userUseCase: UserUseCase,
 ) : ViewModel() {
     private val _state = MutableStateFlow(GameState(pageState = PageState.Loading))
     val state: StateFlow<GameState> = _state.asStateFlow()
     private var generatedGame = mutableStateOf<GameEntry?>(null)
-    private var currentGameId by mutableIntStateOf(0)
+    private var currentGameId by mutableIntStateOf(userUseCase.getLevel())
 
     fun startGame() {
         _state.update {
@@ -32,7 +35,7 @@ class GameViewModel(
     }
 
     fun loadGame() {
-        generatedGame.value = useCase.generateSingleExclusionColorGame()
+        generatedGame.value = gameUseCase.generateSingleExclusionColorGame()
         _state.update {
             it.copy(
                 pageState = PageState.Loaded,
@@ -56,8 +59,20 @@ class GameViewModel(
         }
     }
 
+    fun updateCredits(type: CreditType) {
+        val credit = when(type) {
+            CreditType.ADS -> CreditType.ADS.credit
+            CreditType.FAIL -> CreditType.FAIL.credit
+            CreditType.TIMEOUT -> CreditType.TIMEOUT.credit
+            CreditType.UNLOCK -> CreditType.UNLOCK.credit
+            CreditType.WELCOME -> CreditType.WELCOME.credit
+        }
+        userUseCase.updateCredits(credit)
+    }
+
     fun submitAnswer(color: Color) {
         if (color == generatedGame.value?.colors?.first()) {
+            userUseCase.updateLevel(currentGameId)
             currentGameId++
             _state.update {
                 it.copy(

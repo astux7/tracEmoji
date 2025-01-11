@@ -8,6 +8,7 @@ import com.basta.guessemoji.presentation.MenuPage
 import com.basta.guessemoji.presentation.earn.EarnPage
 import com.basta.guessemoji.presentation.game.Game1Page
 import com.basta.guessemoji.presentation.play.PlayPage
+import com.basta.guessemoji.presentation.profile.ProfileScreen
 import com.basta.guessemoji.presentation.settings.SettingsPage
 
 fun NavGraphBuilder.buildTheGraph(navController: NavController, padding: PaddingValues) {
@@ -23,11 +24,14 @@ fun NavGraphBuilder.buildTheGraph(navController: NavController, padding: Padding
         EarnPage(navController, padding)
     }
 
-    composable(Directions.play.name) {
+    composable(Directions.home.name) {
         PlayPage(navController, padding)
     }
 
     composable(Directions.game1.name) {
         Game1Page(navController, padding)
+    }
+    composable(Directions.profile.name) {
+        ProfileScreen(navController, padding)
     }
 }

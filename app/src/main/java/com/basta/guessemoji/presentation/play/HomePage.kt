@@ -8,14 +8,12 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -24,7 +22,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -33,11 +30,14 @@ import com.basta.guessemoji.components.TextBoxWithIcon
 import com.basta.guessemoji.navigation.Directions
 import com.basta.guessemoji.ui.theme.MenuColor
 import com.basta.guessemoji.ui.theme.clockColor
+import org.koin.androidx.compose.getViewModel
 
+// https://emojipedia.org/nature#mammals-marsupials
 @Composable
 fun PlayPage(
     navController: NavController = NavController(LocalContext.current),
     paddingValues: PaddingValues,
+    viewModel: HomeViewModel = getViewModel()
 ) {
     Box(Modifier.fillMaxSize()) {
         Box(
@@ -56,7 +56,7 @@ fun PlayPage(
             ) {
 
                 Text(
-                    text = "\uD83C\uDFC6 1 level",
+                    text = "\uD83C\uDFC6 ${viewModel.getUserLevel()} level",
                     modifier = Modifier,
                     color = Color.White,
                     fontWeight = FontWeight(700)
@@ -68,7 +68,7 @@ fun PlayPage(
                     fontWeight = FontWeight(700)
                 )
                 Text(
-                    text = "\uD83E\uDE99 0",
+                    text = "\uD83E\uDE99 ${viewModel.getUserCredits()}",
                     modifier = Modifier,
                     color = Color.White,
                     fontWeight = FontWeight(700)
@@ -114,7 +114,10 @@ fun PlayPage(
                 TextBoxWithIcon(Modifier.weight(1f), "Pick a color", "🎨") {
                     navController.navigate(Directions.game1.name)
                 }
-                TextBoxWithIcon(Modifier.weight(1f), "Game 2", "\uD83E\uDDE9")
+                // level 50 to unlock ?
+                TextBoxWithIcon(Modifier.weight(1f), "Coming soon", "\uD83D\uDD12")
+
+              //  TextBoxWithIcon(Modifier.weight(1f), "Memorize", "\uD83E\uDDE9")
             }
 
             Row(
@@ -123,8 +126,12 @@ fun PlayPage(
                     .padding(horizontal = 8.dp),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                TextBoxWithIcon(Modifier.weight(1f), "Pick a shared color", "\uD83E\uDE80")
-                TextBoxWithIcon(Modifier.weight(1f), "Game 4", "\uD83E\uDE80")
+//                TextBoxWithIcon(Modifier.weight(1f), "On the go", "\uD83E\uDE80")
+//                TextBoxWithIcon(Modifier.weight(1f), "Drag", "\uD83E\uDE80")
+                // level 100 to unlock
+                TextBoxWithIcon(Modifier.weight(1f), "Coming soon", "\uD83D\uDD12")
+                // level 200 & 50 coins to unlock
+                TextBoxWithIcon(Modifier.weight(1f), "Coming soon", "\uD83D\uDD12")
             }
         }
     }
@@ -134,4 +141,4 @@ fun PlayPage(
 // not shared color
 // going row and show color need to hit on moving icon with shown color
 // emojis have same emoji as a part
-// put emoji on color by draging
+// put emoji on color by dragging

@@ -5,6 +5,7 @@ data class GameState(
     val errorType: ErrorType? = null,
     val message: String? = null,
     val level: Int? = null,
+    val credits: Int? = null,
     val emojis: List<String> = emptyList(),
 )
 

@@ -9,6 +9,7 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import com.basta.guessemoji.domain.model.User
 import com.basta.guessemoji.domain.repository.UserPreferenceRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.catch
@@ -18,13 +19,14 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.supervisorScope
 
 class UserPreferenceRepositoryImp(
-    private val context: Context,
+    context: Context,
     private val externalScope: CoroutineScope
 ) : UserPreferenceRepository {
     companion object {
         const val PREFERENCE_KEY_PREFIX = "pref_user_"
         const val APP_DATA_STORE = "tracemoji"
         const val CREDITS_TOTAL = "credits_total"
+        const val GAME_LEVEL = "game_level"
         const val LAST_SEEN = "lastSeen"
         const val TODAY_REWARDS_LIST = "today_rewards_list"
     }
@@ -48,8 +50,23 @@ class UserPreferenceRepositoryImp(
         }
     }
 
-    override suspend fun getUser(): Int  =
-        cachedMap?.get(getPreferences(PREFERENCE_KEY_PREFIX+CREDITS_TOTAL))?.toInt() ?: 0 // credit
+    override fun getUser(): User {
+        var level = "0"
+        var credit = "0"
+        externalScope.launch {
+             credit =
+                cachedMap?.get(getPreferences(PREFERENCE_KEY_PREFIX + CREDITS_TOTAL)) ?: "0"
+                   // credit
+
+             level =
+                 cachedMap?.get(getPreferences(PREFERENCE_KEY_PREFIX + GAME_LEVEL)) ?: "0"
+
+
+        } // level
+
+        return User(credit.toIntOrNull()?: 0, level.toIntOrNull() ?: 0)
+
+    }
 
     private fun getUserInto() = dataStore.data.catch { e ->
         if (e is IOException){
@@ -61,34 +78,47 @@ class UserPreferenceRepositoryImp(
     }.map { it }
 
 
-    override suspend fun addCredits(credit: Int) {
-        cachedMap?.let{
+    override fun addCredits(credit: Int) {
+      //  cachedMap?.let{
             externalScope.launch {
                 try {
                     dataStore.edit { preferences ->
-                        preferences[getPreferences(PREFERENCE_KEY_PREFIX+CREDITS_TOTAL)] = credit.toString()
+                        preferences[getPreferences(PREFERENCE_KEY_PREFIX + CREDITS_TOTAL)] = credit.toString()
                     }
-                    cachedMap?.set(getPreferences(PREFERENCE_KEY_PREFIX+CREDITS_TOTAL), credit.toString())
+                    cachedMap?.set(getPreferences(PREFERENCE_KEY_PREFIX + CREDITS_TOTAL), credit.toString())
                 } catch (e: Exception){}
             }
-        }
+      //  }
     }
 
-    override suspend fun removeCredits(credit: Int) {
-        cachedMap?.let{
+    override fun updateLevel(level: Int) {
+      //  cachedMap?.let {
             externalScope.launch {
                 try {
                     dataStore.edit { preferences ->
-                        preferences.remove(getPreferences(PREFERENCE_KEY_PREFIX+CREDITS_TOTAL))
+                        preferences[getPreferences(PREFERENCE_KEY_PREFIX + GAME_LEVEL)] = level.toString()
                     }
-                    cachedMap?.remove(getPreferences(PREFERENCE_KEY_PREFIX+CREDITS_TOTAL))
+                    cachedMap?.set(getPreferences(PREFERENCE_KEY_PREFIX + GAME_LEVEL), level.toString())
+                } catch (e: Exception){}
+            }
+      //  }
+    }
+
+    override fun removeCredits(credit: Int) {
+     //   cachedMap?.let{
+            externalScope.launch {
+                try {
+                    dataStore.edit { preferences ->
+                        preferences.remove(getPreferences(PREFERENCE_KEY_PREFIX + CREDITS_TOTAL))
+                    }
+                    cachedMap?.remove(getPreferences(PREFERENCE_KEY_PREFIX + CREDITS_TOTAL))
                 } catch (e: Exception) {}
             }
-        }
+      //  }
     }
 
     override fun wipeData() {
-        cachedMap?.let {
+       // cachedMap?.let {
             externalScope.launch {
                 try {
                     dataStore.edit { preferences ->
@@ -101,7 +131,7 @@ class UserPreferenceRepositoryImp(
                     }
                     cachedMap?.clear()
                 } catch (e: Exception) {}
-            }
+        //    }
         }
         setUpCacheMap()
     }

@@ -34,15 +34,19 @@ import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
 fun EarnPage(
     navController: NavController = NavController(LocalContext.current),
     paddingValues: PaddingValues,
-  //  viewModel: SettingsViewModel = getViewModel(),
+    //  viewModel: SettingsViewModel = getViewModel(),
 ) {
     var rewardedAd: RewardedAd? = null
     val context = LocalContext.current
 
-    var TAG = "Reward1"
+    var TAG = "Reward"
 
-        var adRequest = AdRequest.Builder().build()
-        RewardedAd.load(context, stringResource(id = R.string.reward_ad_one), adRequest, object : RewardedAdLoadCallback() {
+    var adRequest = AdRequest.Builder().build()
+    RewardedAd.load(
+        context,
+        stringResource(id = R.string.reward_ad_one),
+        adRequest,
+        object : RewardedAdLoadCallback() {
             override fun onAdFailedToLoad(adError: LoadAdError) {
                 Log.d(TAG, adError.toString())
                 rewardedAd = null
@@ -54,7 +58,7 @@ fun EarnPage(
             }
         })
 
-    rewardedAd?.fullScreenContentCallback = object: FullScreenContentCallback() {
+    rewardedAd?.fullScreenContentCallback = object : FullScreenContentCallback() {
         override fun onAdClicked() {
             // Called when a click is recorded for an ad.
             Log.d(TAG, "Ad was clicked.")
@@ -100,12 +104,14 @@ fun EarnPage(
             .padding(8.dp)
             .clickable {
                 rewardedAd?.let { ad ->
-                    ad.show(context.getActivityOrNull()!!, OnUserEarnedRewardListener { rewardItem ->
-                        // Handle the reward.
-                        val rewardAmount = rewardItem.amount
-                        val rewardType = rewardItem.type
-                        Log.d(TAG, "User earned the reward. $rewardAmount $rewardType")
-                    })
+                    ad.show(
+                        context.getActivityOrNull()!!,
+                        OnUserEarnedRewardListener { rewardItem ->
+                            // Handle the reward.
+                            val rewardAmount = rewardItem.amount
+                            val rewardType = rewardItem.type
+                            Log.d(TAG, "User earned the reward. $rewardAmount $rewardType")
+                        })
                 } ?: run {
                     Log.d(TAG, "The rewarded ad wasn't ready yet.")
                 }

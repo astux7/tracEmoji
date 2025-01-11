@@ -18,5 +18,4 @@ class GameUseCase(
     private fun generateSingleExcludedColor(color: Color): String = gameRepo.getSingleColorEmoji(color)
 
     fun gameColors() = gameRepo.getGameColors()
-
 }

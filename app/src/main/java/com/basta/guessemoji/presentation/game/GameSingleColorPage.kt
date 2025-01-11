@@ -1,29 +1,18 @@
 package com.basta.guessemoji.presentation.game
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -50,9 +39,9 @@ import com.basta.guessemoji.common.utils.toEmoji
 import com.basta.guessemoji.components.ColorAnswerPanel
 import com.basta.guessemoji.components.EmojiWithFill
 import com.basta.guessemoji.components.LottieAnimationLoader
-import com.basta.guessemoji.navigation.Directions
-import com.basta.guessemoji.ui.theme.MenuColor
-import com.basta.guessemoji.ui.theme.clockColor
+import com.basta.guessemoji.presentation.ui.BackButton
+import com.basta.guessemoji.presentation.ui.LevelBox
+import com.basta.guessemoji.presentation.ui.TimerBox
 import kotlinx.coroutines.delay
 import org.koin.androidx.compose.getViewModel
 
@@ -107,13 +96,13 @@ fun Game1Page(
                 PageState.Loaded -> {
                     startTimer = true
                     LaunchedEffect(Unit) {
-                        delay(400) // 2 seconds delay
+                        delay(400)
                         isVisibleTimer = true
                     }
 
                     EmojiWithFill(
                         state.value.emojis.joinToString(separator = " "),
-                        Color.White
+                        Color.White,
                     )
 
                     ColorAnswerPanel { color ->
@@ -132,7 +121,7 @@ fun Game1Page(
 
                             ErrorType.BadAnswer -> {
                                 FailBox(
-                                    title = "Oh no!",
+                                    title = stringResource(id = R.string.game_failed),
                                     color = selectedColor,
                                     emojis = state.value.emojis.joinToString(separator = " "),
                                     nextAction = {
@@ -185,7 +174,7 @@ fun Game1Page(
                     }
 
                     FailBox(
-                        title = "Oh no! Timeout",
+                        title = stringResource(id = R.string.game_timeout),
                         color = selectedColor,
                         emojis = "⏰",
                         nextAction = {
@@ -220,122 +209,6 @@ fun Game1Page(
 }
 
 @Composable
-fun BackButton(navController: NavController) {
-    Box(
-        Modifier
-            .padding(vertical = 40.dp)
-            .offset(x = (-3).dp)
-            .size(40.dp)
-            .clip(RoundedCornerShape(topEnd = 16.dp, bottomEnd = 16.dp))
-            .border(2.dp, Color.White, RoundedCornerShape(topEnd = 16.dp, bottomEnd = 16.dp))
-            .background(MenuColor),
-        contentAlignment = Alignment.Center,
-    ) {
-        Text(
-            text = "↩",
-            color = Color.White,
-            fontSize = 24.sp,
-            textAlign = TextAlign.Center,
-            fontWeight = FontWeight(700),
-            modifier = Modifier
-                .padding(bottom = 4.dp)
-                .clickable {
-                    navController.navigate(Directions.play.name)
-                }
-        )
-    }
-}
-
-@Composable
-fun LevelBox(level: String) {
-    Box(Modifier.fillMaxWidth()) {
-        Box(
-            Modifier
-                .padding(top = 50.dp, end = 24.dp)
-                .align(Alignment.TopEnd)
-                .clip(RoundedCornerShape(topStart = 16.dp, bottomStart = 16.dp))
-                .border(2.dp, clockColor, RoundedCornerShape(topStart = 16.dp, bottomStart = 16.dp))
-                .size(52.dp, 24.dp)
-                .background(Color.White),
-            contentAlignment = Alignment.CenterStart,
-        ) {
-            Text(
-                text = level,
-                color = MaterialTheme.colorScheme.background,
-                fontSize = 14.sp,
-                textAlign = TextAlign.End,
-                fontWeight = FontWeight(800),
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(end = 18.dp, start = 2.dp)
-                    .align(Alignment.CenterEnd)
-            )
-        }
-
-        Box(
-            Modifier
-                .padding(vertical = 40.dp)
-                .size(40.dp, 40.dp)
-                .align(Alignment.TopEnd),
-            contentAlignment = Alignment.TopEnd,
-        ) {
-            Text(
-                text = "\uD83C\uDF1F",
-                fontSize = 28.sp,
-                textAlign = TextAlign.Center,
-                fontWeight = FontWeight(700),
-                modifier = Modifier.padding(end = 2.dp, top = 2.dp)
-            )
-        }
-    }
-}
-
-@Composable
-fun TimerBox(isVisibleTimer: Boolean, timeCalculator: Int) {
-    Row(
-        Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.Center
-    ) {
-        Spacer(
-            modifier = Modifier
-                .height(80.dp)
-                .width(1.dp)
-        ) // keep height
-
-        AnimatedVisibility(
-            visible = isVisibleTimer,
-            enter = slideInVertically(),
-            exit = slideOutVertically()
-        ) {
-            Box(
-                modifier = Modifier
-                    .height(80.dp)
-                    .fillMaxWidth(0.5f)
-                    .offset(y = (-3).dp)
-                    .clip(RoundedCornerShape(bottomStart = 16.dp, bottomEnd = 16.dp))
-                    .border(
-                        2.dp,
-                        Color.White,
-                        RoundedCornerShape(bottomStart = 16.dp, bottomEnd = 16.dp)
-                    )
-                    .background(clockColor)
-                    .padding(top = 30.dp),
-                contentAlignment = Alignment.BottomCenter
-            ) {
-                // Center the text horizontally at the top
-                Text(
-                    text = "⏰ Time left: ${timeCalculator}s",
-                    color = Color.White,
-                    modifier = Modifier
-                        .padding(top = 16.dp)
-                        .align(Alignment.TopCenter) // Align at the top center of the screen
-                )
-            }
-        }
-    }
-}
-
-@Composable
 fun CongratsBox(correctColor: Color?, emojis: String, nextAction: () -> Unit) {
     Column(
         modifier = Modifier
@@ -346,7 +219,7 @@ fun CongratsBox(correctColor: Color?, emojis: String, nextAction: () -> Unit) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "🎉 Congrats! 🎉",
+            text = stringResource(id = R.string.game_congrats),
             fontSize = 24.sp,
             fontWeight = FontWeight.Bold,
             color = Color.White,
@@ -356,7 +229,7 @@ fun CongratsBox(correctColor: Color?, emojis: String, nextAction: () -> Unit) {
         EmojiWithFill(emojis)
 
         Text(
-            text = "${correctColor.toEmoji()} is the CORRECT answer",
+            text = stringResource(id = R.string.game_correct_answer, correctColor.toEmoji()),
             fontSize = 16.sp,
             fontWeight = FontWeight.Bold,
             color = Color.White,
@@ -396,7 +269,7 @@ fun FailBox(title: String, color: Color?, emojis: String, nextAction: () -> Unit
 
         color?.let {
             Text(
-                text = "${color.toEmoji()} is NOT the CORRECT answer",
+                text = stringResource(id = R.string.game_wrong_answer, color.toEmoji()),
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color.White,
