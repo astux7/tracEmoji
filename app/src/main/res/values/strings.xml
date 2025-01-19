@@ -7,7 +7,7 @@
     <string name="home_label">Home</string>
     <string name="next_label">Next</string>
     <string name="credits_label">Credits</string>
-    <string name="earn_label">Earn</string>
+    <string name="earn_label">Rewards</string>
     <string name="privacy_policy_label">🛡️ Privacy Policy</string>
     <string name="arrow_label">Arrow right</string>
     <string name="game_one_color_description">Pick ONE of FOUR colours \n\n 🟨 🟦 🟥 🟩\n\n that is NOT in the displayed emojis.\n</string>
@@ -20,5 +20,8 @@
     <string name="game_time_calculator">⏰ Time left: %ds</string>
     <string name="game_congrats">"🎉 Congrats! 🎉</string>
     <string name="game_failed">Oh no!</string>
-    <string name="game_timeout">"Timeout"</string>
+    <string name="game_timeout">Timeout</string>
+    <string name="back_label">Back</string>
+    <string name="profile_label">Profile</string>
+    <string name="setting_label">Settings</string>
 </resources>

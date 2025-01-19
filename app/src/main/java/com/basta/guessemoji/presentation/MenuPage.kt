@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.unit.dp
+import com.basta.guessemoji.R
 import com.basta.guessemoji.components.TextBoxWithIcon
 import com.basta.guessemoji.navigation.Directions
 
@@ -23,6 +24,8 @@ fun MenuPage(
     navController: NavController = NavController(LocalContext.current),
     paddingValues: PaddingValues
 ) {
+    val context = LocalContext.current
+
     Column(Modifier.padding(top = 40.dp).padding(paddingValues)) {
         Row(
             Modifier.fillMaxWidth(),
@@ -33,10 +36,10 @@ fun MenuPage(
                 Modifier.weight(1f),
                 verticalArrangement = Arrangement.Center,
             ) {
-                TextBoxWithIcon(Modifier.fillMaxWidth(), "Back", "⬅\uFE0F") {
+                TextBoxWithIcon(Modifier.fillMaxWidth(), context.getString(R.string.back_label),"⬅\uFE0F") {
                     navController.navigate(Directions.home.name)
                 }
-                TextBoxWithIcon(Modifier.fillMaxWidth(), "Earn", "\uD83C\uDF81") {
+                TextBoxWithIcon(Modifier.fillMaxWidth(), context.getString(R.string.earn_label), "\uD83C\uDF81") {
                     navController.navigate(Directions.earn.name)
                 }
             }
@@ -46,12 +49,12 @@ fun MenuPage(
             ) {
                 TextBoxWithIcon(
                     Modifier.fillMaxWidth(),
-                    "Profile",
+                    context.getString(R.string.profile_label),
                     "\uD83D\uDC64"
                 ) {
                     navController.navigate(Directions.profile.name)
                 }
-                TextBoxWithIcon(Modifier.fillMaxWidth(), "Settings", "⚙\uFE0F") {
+                TextBoxWithIcon(Modifier.fillMaxWidth(), context.getString(R.string.setting_label), "⚙\uFE0F") {
                     navController.navigate(Directions.settings.name)
                 }
             }

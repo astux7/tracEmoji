@@ -72,8 +72,8 @@ class GameViewModel(
 
     fun submitAnswer(color: Color) {
         if (color == generatedGame.value?.colors?.first()) {
-            userUseCase.updateLevel(currentGameId)
             currentGameId++
+            userUseCase.updateLevel(currentGameId)
             _state.update {
                 it.copy(
                     pageState = PageState.Success,
