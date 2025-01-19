@@ -1,6 +1,6 @@
-package com.basta.guessemoji.presentation.game
+package com.basta.guessemoji.presentation.game.pickcolor
 
-data class GameState(
+data class PickAColorGameState(
     val pageState: PageState = PageState.Loading,
     val errorType: ErrorType? = null,
     val message: String? = null,

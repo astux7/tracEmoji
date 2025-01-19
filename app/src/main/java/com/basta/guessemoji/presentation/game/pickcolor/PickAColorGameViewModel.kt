@@ -1,4 +1,4 @@
-package com.basta.guessemoji.presentation.game
+package com.basta.guessemoji.presentation.game.pickcolor
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -9,17 +9,18 @@ import androidx.lifecycle.ViewModel
 import com.basta.guessemoji.domain.model.CreditType
 import com.basta.guessemoji.domain.model.GameEntry
 import com.basta.guessemoji.presentation.UserUseCase
+import com.basta.guessemoji.presentation.game.GameUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
-class GameViewModel(
+class PickAColorGameViewModel(
     private val gameUseCase: GameUseCase,
     private val userUseCase: UserUseCase,
 ) : ViewModel() {
-    private val _state = MutableStateFlow(GameState(pageState = PageState.Loading))
-    val state: StateFlow<GameState> = _state.asStateFlow()
+    private val _state = MutableStateFlow(PickAColorGameState(pageState = PageState.Loading))
+    val state: StateFlow<PickAColorGameState> = _state.asStateFlow()
     private var generatedGame = mutableStateOf<GameEntry?>(null)
     private var currentGameId by mutableIntStateOf(userUseCase.getLevel())
 

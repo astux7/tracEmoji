@@ -7,7 +7,7 @@ import com.basta.guessemoji.domain.repository.UserPreferenceRepository
 import com.basta.guessemoji.presentation.UserUseCase
 import com.basta.guessemoji.presentation.earn.EarnViewModel
 import com.basta.guessemoji.presentation.game.GameUseCase
-import com.basta.guessemoji.presentation.game.GameViewModel
+import com.basta.guessemoji.presentation.game.pickcolor.PickAColorGameViewModel
 import com.basta.guessemoji.presentation.play.HomeViewModel
 import com.basta.guessemoji.presentation.profile.ProfileViewModel
 import com.basta.guessemoji.presentation.settings.SettingsViewModel
@@ -41,7 +41,7 @@ object KoinModule {
 //            }
 
             viewModel { SettingsViewModel() }
-            viewModel { GameViewModel(get(), get()) }
+            viewModel { PickAColorGameViewModel(get(), get()) }
             viewModel { ProfileViewModel(get()) }
             viewModel { HomeViewModel(get()) }
             viewModel { EarnViewModel(get()) }

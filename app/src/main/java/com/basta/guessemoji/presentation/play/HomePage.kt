@@ -111,11 +111,14 @@ fun PlayPage(
                     .padding(horizontal = 8.dp),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                TextBoxWithIcon(Modifier.weight(1f), "Pick a color", "🎨") {
+                TextBoxWithIcon(Modifier.weight(1f), "Pick a Color", "🎨") {
                     navController.navigate(Directions.game1.name)
                 }
                 // level 50 to unlock ?
-                TextBoxWithIcon(Modifier.weight(1f), "Coming soon", "\uD83D\uDD12")
+//                TextBoxWithIcon(Modifier.weight(1f), "Unlock", "\uD83D\uDD12")
+                TextBoxWithIcon(Modifier.weight(1f), "Color Tap ", "\uD83D\uDC46") {
+
+                }
 
               //  TextBoxWithIcon(Modifier.weight(1f), "Memorize", "\uD83E\uDDE9")
             }
@@ -129,9 +132,9 @@ fun PlayPage(
 //                TextBoxWithIcon(Modifier.weight(1f), "On the go", "\uD83E\uDE80")
 //                TextBoxWithIcon(Modifier.weight(1f), "Drag", "\uD83E\uDE80")
                 // level 100 to unlock
-                TextBoxWithIcon(Modifier.weight(1f), "Coming soon", "\uD83D\uDD12")
+                TextBoxWithIcon(Modifier.weight(1f), "Coming soon", "⌛")
                 // level 200 & 50 coins to unlock
-                TextBoxWithIcon(Modifier.weight(1f), "Coming soon", "\uD83D\uDD12")
+                TextBoxWithIcon(Modifier.weight(1f), "Coming soon", "⌛")
             }
         }
     }

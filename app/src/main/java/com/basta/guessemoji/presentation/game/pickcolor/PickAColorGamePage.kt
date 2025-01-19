@@ -1,4 +1,4 @@
-package com.basta.guessemoji.presentation.game
+package com.basta.guessemoji.presentation.game.pickcolor
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -46,10 +46,10 @@ import kotlinx.coroutines.delay
 import org.koin.androidx.compose.getViewModel
 
 @Composable
-fun Game1Page(
+fun PickAColorGamePage(
     navController: NavController = NavController(LocalContext.current),
     paddingValues: PaddingValues,
-    viewModel: GameViewModel = getViewModel()
+    viewModel: PickAColorGameViewModel = getViewModel()
 ) {
     val state = viewModel.state.collectAsState()
 
