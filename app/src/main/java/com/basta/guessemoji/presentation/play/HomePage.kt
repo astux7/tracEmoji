@@ -117,7 +117,7 @@ fun PlayPage(
                 // level 50 to unlock ?
 //                TextBoxWithIcon(Modifier.weight(1f), "Unlock", "\uD83D\uDD12")
                 TextBoxWithIcon(Modifier.weight(1f), "Color Tap ", "\uD83D\uDC46") {
-
+                    navController.navigate(Directions.game2.name)
                 }
 
               //  TextBoxWithIcon(Modifier.weight(1f), "Memorize", "\uD83E\uDDE9")

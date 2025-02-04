@@ -3,6 +3,7 @@ package com.basta.guessemoji.components
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.text.TextStyle
@@ -11,7 +12,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun EmojiWithFill(text: String, color: Color? = null, size: Int = 40) {
+fun EmojiWithFill(text: String, color: Color? = null, size: Int = 40, modifier: Modifier = Modifier) {
     val showEmoji = color?.let {
         TextStyle(
             fontSize = size.sp,
@@ -24,6 +25,7 @@ fun EmojiWithFill(text: String, color: Color? = null, size: Int = 40) {
         fontWeight = FontWeight.Bold,
     )
     Text(
+        modifier = modifier,
         text = text,
         style = showEmoji
     )

@@ -11,7 +11,8 @@
     <string name="privacy_policy_label">🛡️ Privacy Policy</string>
     <string name="arrow_label">Arrow right</string>
     <string name="game_one_color_description">Pick ONE of FOUR colours \n\n 🟨 🟦 🟥 🟩\n\n that is NOT in the displayed emojis.\n</string>
-    <string name="game_one_color_description_title">💡 Tip 💡\n</string>
+    <string name="game_tap_color_description">Tap the emoji matching the displayed color\n 🟨 🟦 🟥 🟩.\n\n Your correct taps will be shown as (correct/total).\n</string>
+    <string name="game_color_description_title">💡 Tip 💡\n</string>
     <string name="reward_ad_one">ca-app-pub-5590715197528572/2337986435</string>
     <string name="reward_ad_two">ca-app-pub-5590715197528572/3267924728</string>
     <string name="reward_ad_three">ca-app-pub-5590715197528572/5738175396</string>

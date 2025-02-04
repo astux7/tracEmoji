@@ -1,4 +1,4 @@
-package com.basta.guessemoji.presentation.game.pickcolor
+package com.basta.guessemoji.presentation.game.colortap
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -34,9 +34,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.basta.guessemoji.R
-import com.basta.guessemoji.common.Constants.PICK_COLOR_TIMER
-import com.basta.guessemoji.components.ColorAnswerPanel
-import com.basta.guessemoji.components.EmojiWithFill
+import com.basta.guessemoji.common.Constants.TAP_COLOR_TIMER
+import com.basta.guessemoji.components.EmojiSlideShow
+import com.basta.guessemoji.components.LivesAndAmountRow
 import com.basta.guessemoji.components.LottieAnimationLoader
 import com.basta.guessemoji.presentation.game.ErrorType
 import com.basta.guessemoji.presentation.game.PageState
@@ -49,17 +49,17 @@ import kotlinx.coroutines.delay
 import org.koin.androidx.compose.getViewModel
 
 @Composable
-fun PickAColorGamePage(
+fun ColorTapGamePage(
     navController: NavController = NavController(LocalContext.current),
     paddingValues: PaddingValues,
-    viewModel: PickAColorGameViewModel = getViewModel()
+    viewModel: ColorTapViewModel = getViewModel()
 ) {
     val state = viewModel.state.collectAsState()
 
     LaunchedEffect(Unit) { viewModel.startGame() }
 
     var isVisibleTimer by remember { mutableStateOf(false) }
-    var timeCalculator by remember { mutableIntStateOf(PICK_COLOR_TIMER) }
+    var timeCalculator by remember { mutableIntStateOf(TAP_COLOR_TIMER) }
     var startTimer by remember { mutableStateOf(false) }
     var selectedColor by remember { mutableStateOf<Color?>(null) }
 
@@ -103,21 +103,22 @@ fun PickAColorGamePage(
                         isVisibleTimer = true
                     }
 
-                    EmojiWithFill(
-                        text = state.value.emojis.joinToString(separator = " "),
-                        color = Color.White,
-                        size = 60,
-                        modifier = Modifier.padding(vertical = 16.dp)
-                    )
-
-                    ColorAnswerPanel { color ->
-                        viewModel.submitAnswer(color)
-                        selectedColor = color
-                        startTimer = false
+                    state.value.selectedColor?.let {
+                        LivesAndAmountRow(
+                            lives = state.value.totalLives,
+                            amount = state.value.totalColoredEmoji,
+                            found = state.value.totalGuessedEmoji,
+                            selectedColor = it
+                        )
                     }
+
+                    EmojiSlideShow(state.value.emojis, onAction = { emoji -> viewModel.submitAnswer(emoji)})
+
                 }
 
                 PageState.Error -> {
+                    timeCalculator = TAP_COLOR_TIMER
+                    selectedColor = null
                     state.value.errorType?.let { error ->
                         when (error) {
                             ErrorType.Generic -> LottieAnimationLoader(rawRes = R.raw.generic_error)
@@ -127,10 +128,10 @@ fun PickAColorGamePage(
                             ErrorType.BadAnswer -> {
                                 FailBox(
                                     title = stringResource(id = R.string.game_failed),
-                                    color = selectedColor,
-                                    emojis = state.value.emojis.joinToString(separator = " "),
+                                    color = null,
+                                    emojis = "\uD83D\uDC94 \uD83D\uDC94 \uD83D\uDC94 \n",
                                     nextAction = {
-                                        timeCalculator = PICK_COLOR_TIMER
+                                        timeCalculator = TAP_COLOR_TIMER
                                         selectedColor = null
                                         viewModel.loadGame()
                                     }
@@ -149,6 +150,8 @@ fun PickAColorGamePage(
                             .padding(20.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
+                        timeCalculator = TAP_COLOR_TIMER
+                        selectedColor = null
                         Text(
                             text = stringResource(id = R.string.game_color_description_title),
                             modifier = Modifier.padding(bottom = 8.dp),
@@ -156,17 +159,16 @@ fun PickAColorGamePage(
                             textAlign = TextAlign.Center
                         )
                         Text(
-                            text = stringResource(id = R.string.game_one_color_description),
+                            text = stringResource(id = R.string.game_tap_color_description),
                             modifier = Modifier.padding(bottom = 8.dp),
                             textAlign = TextAlign.Center
                         )
                         Button(
                             modifier = Modifier.fillMaxWidth(),
                             onClick = {
-                                timeCalculator = PICK_COLOR_TIMER
-                                selectedColor = null
                                 viewModel.loadGame()
-                            }) {
+                            }
+                        ) {
                             Text(text = stringResource(id = R.string.go_label))
                         }
                     }
@@ -177,14 +179,14 @@ fun PickAColorGamePage(
                         delay(400)
                         isVisibleTimer = false
                     }
+                    selectedColor = null
+                    timeCalculator = TAP_COLOR_TIMER
 
                     FailBox(
                         title = stringResource(id = R.string.game_timeout),
                         color = selectedColor,
                         emojis = "⏰",
                         nextAction = {
-                            timeCalculator = PICK_COLOR_TIMER
-                            selectedColor = null
                             viewModel.loadGame()
                         }
                     )
@@ -196,14 +198,13 @@ fun PickAColorGamePage(
                         isVisibleTimer = false
                     }
                     startTimer = false
-                    timeCalculator = PICK_COLOR_TIMER
+                    timeCalculator = TAP_COLOR_TIMER
+                    selectedColor = null
 
                     CongratsBox(
-                        correctColor = selectedColor,
-                        emojis = state.value.emojis.joinToString(separator = " "),
+                        correctColor = null,
+                        emojis = "You won!",
                         nextAction = {
-                            timeCalculator = PICK_COLOR_TIMER
-                            selectedColor = null
                             viewModel.loadGame()
                         }
                     )

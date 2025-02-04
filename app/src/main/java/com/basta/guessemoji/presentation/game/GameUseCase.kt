@@ -7,7 +7,12 @@ import com.basta.guessemoji.domain.repository.GameRepository
 class GameUseCase(
     private val gameRepo : GameRepository
 ) {
-    fun generateSingleExclusionColorGame() : GameEntry {
+    companion object {
+        const val TOTAL_SLIDER_ITEMS = 29
+        const val MIN_START = 4
+        const val MAX_END = 9
+    }
+    fun generateSingleExclusionColorGame() : GameEntry { // pick a color
         val colorExcluded = gameColors().shuffled().first()
         val colorsForEmoji = gameColors().filter { it != colorExcluded }
 
@@ -16,6 +21,19 @@ class GameUseCase(
     }
 
     private fun generateSingleExcludedColor(color: Color): String = gameRepo.getSingleColorEmoji(color)
+    private fun generateSingleColorEmojis(color: Color) = gameRepo.getSingleColorEmojis(color) ?: emptyList()
 
-    fun gameColors() = gameRepo.getGameColors()
+    private fun gameColors() = gameRepo.getGameColors()
+
+    fun generateSliderGame() : GameEntry {
+        val randomColorCount = (MIN_START..MAX_END).random()
+
+        val colorSelected = gameColors().shuffled().first()
+        val excludedColors = gameColors().filter { it != colorSelected }
+
+        val colorsCharacters: List<String> = generateSingleColorEmojis(colorSelected).take(randomColorCount)
+        var restOfEmojis = excludedColors.map { generateSingleColorEmojis(it) }.flatten().take(TOTAL_SLIDER_ITEMS - randomColorCount)
+
+        return GameEntry(colors = listOf(colorSelected), characters = (restOfEmojis + colorsCharacters).shuffled(), colorsCharacters = colorsCharacters)
+    }
 }
