@@ -8,9 +8,9 @@ class GameUseCase(
     private val gameRepo : GameRepository
 ) {
     companion object {
-        const val TOTAL_SLIDER_ITEMS = 29
+        const val TOTAL_SLIDER_ITEMS = 20
         const val MIN_START = 4
-        const val MAX_END = 9
+        const val MAX_END = 6
     }
     fun generateSingleExclusionColorGame() : GameEntry { // pick a color
         val colorExcluded = gameColors().shuffled().first()

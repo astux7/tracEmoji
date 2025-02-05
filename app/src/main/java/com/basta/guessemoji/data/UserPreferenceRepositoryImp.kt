@@ -37,6 +37,7 @@ class UserPreferenceRepositoryImp(
     private val dataStore: DataStore<Preferences> = context.dataStore
 
     init {
+        Log.d("ASTA +", "setUpCacheMap")
         setUpCacheMap()
     }
 

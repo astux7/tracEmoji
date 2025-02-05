@@ -6,4 +6,5 @@ object Constants {
     const val DEBUG_ON = false
     const val PICK_COLOR_TIMER = 10
     const val TAP_COLOR_TIMER = 30
+    const val UNLOCK_LEVEL_TAP = 30
 }
