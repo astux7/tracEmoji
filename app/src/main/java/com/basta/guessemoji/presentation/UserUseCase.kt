@@ -14,4 +14,8 @@ class UserUseCase(private val userRepo: UserPreferenceRepository) {
     fun addCredits(credit: Int) = userRepo.addCredits(credit)
 
     fun getCredits() = userRepo.getUser().credit
+
+    fun getLives() = userRepo.getUser().lives
+
+    fun updateLives(lives: Int) = userRepo.updateLives(lives)
 }

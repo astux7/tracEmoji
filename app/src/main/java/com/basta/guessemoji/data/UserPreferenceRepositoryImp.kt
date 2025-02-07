@@ -28,6 +28,7 @@ class UserPreferenceRepositoryImp(
         const val APP_DATA_STORE = "tracemoji"
         const val CREDITS_TOTAL = "credits_total"
         const val GAME_LEVEL = "game_level"
+        const val USER_LIVES = "user_lives"
         const val LAST_SEEN = "lastSeen"
         const val TODAY_REWARDS_LIST = "today_rewards_list"
     }
@@ -59,14 +60,22 @@ class UserPreferenceRepositoryImp(
     private fun getLevel() =
         cachedMap?.get(getPreferences(PREFERENCE_KEY_PREFIX + GAME_LEVEL)) ?: "0"
 
+    private fun getLives() =
+        cachedMap?.get(getPreferences(PREFERENCE_KEY_PREFIX + USER_LIVES)) ?: "0"
+
 
     override fun getUser(): User {
         var level: String? = getLevel()
         var credit: String? = getCredit()
+        var lives: String? = getLives()
 
-        Log.d("getUser", "Credit: $credit, Level: $level")
+        Log.d("getUser", "Credit: $credit, Level: $level, lives: $lives")
 
-        return User(credit?.toIntOrNull() ?: 0, level?.toIntOrNull() ?: 0)
+        return User(
+            credit?.toIntOrNull() ?: 0,
+            level?.toIntOrNull() ?: 0,
+            lives?.toIntOrNull() ?: 0
+        )
     }
 
     private fun getUserInto() = dataStore.data.catch { e ->
@@ -99,7 +108,6 @@ class UserPreferenceRepositoryImp(
 
     override fun updateLevel(level: Int) {
         cachedMap?.let {
-            Log.d("ASTAAAA", "ASTA level " + level)
             externalScope.launch {
                 try {
                     dataStore.edit { preferences ->
@@ -117,18 +125,37 @@ class UserPreferenceRepositoryImp(
         }
     }
 
-    override fun removeCredits(credit: Int) {
-        //   cachedMap?.let{
-        externalScope.launch {
-            try {
-                dataStore.edit { preferences ->
-                    preferences.remove(getPreferences(PREFERENCE_KEY_PREFIX + CREDITS_TOTAL))
+    override fun updateLives(lives: Int) {
+        cachedMap?.let {
+            externalScope.launch {
+                try {
+                    dataStore.edit { preferences ->
+                        preferences[getPreferences(PREFERENCE_KEY_PREFIX + USER_LIVES)] =
+                            lives.toString()
+                    }
+                    cachedMap?.set(
+                        getPreferences(PREFERENCE_KEY_PREFIX + USER_LIVES),
+                        lives.toString()
+                    )
+                } catch (e: Exception) {
+                    0
                 }
-                cachedMap?.remove(getPreferences(PREFERENCE_KEY_PREFIX + CREDITS_TOTAL))
-            } catch (e: Exception) {
             }
         }
-        //  }
+    }
+
+    override fun removeCredits(credit: Int) {
+        cachedMap?.let {
+            externalScope.launch {
+                try {
+                    dataStore.edit { preferences ->
+                        preferences.remove(getPreferences(PREFERENCE_KEY_PREFIX + CREDITS_TOTAL))
+                    }
+                    cachedMap?.remove(getPreferences(PREFERENCE_KEY_PREFIX + CREDITS_TOTAL))
+                } catch (e: Exception) {
+                }
+            }
+        }
     }
 
     override fun wipeData() {

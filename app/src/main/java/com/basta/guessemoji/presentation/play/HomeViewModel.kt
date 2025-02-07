@@ -16,7 +16,7 @@ class HomeViewModel(
     fun setUp() {
         _state.update {
             it.copy(
-                lives = 0,
+                lives = getUserLives(),
                 coins = getUserCredits(),
                 level = getUserLevel()
             )
@@ -26,4 +26,6 @@ class HomeViewModel(
     private fun getUserLevel() = userUseCase.getLevel()
 
     private fun getUserCredits() = userUseCase.getCredits()
+
+    private fun getUserLives() = userUseCase.getLives()
 }

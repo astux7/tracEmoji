@@ -7,4 +7,5 @@ object Constants {
     const val PICK_COLOR_TIMER = 10
     const val TAP_COLOR_TIMER = 30
     const val UNLOCK_LEVEL_TAP = 30
+    const val MAX_LIVES = 3
 }

@@ -13,21 +13,10 @@ object Directions {
             get() = "menu"
         override val arguments: List<NamedNavArgument>
             get() = emptyList()
-//                listOf(
-//                navArgument("type") {
-//                    type = NavType.StringType
-//                }
-//            )
     }
     val earn = object : NavigationCommand {
         override val name: String
             get() = "earn"
-        override val arguments: List<NamedNavArgument>
-            get() = emptyList()
-    }
-    val settings = object : NavigationCommand {
-        override val name: String
-            get() = "settings"
         override val arguments: List<NamedNavArgument>
             get() = emptyList()
     }
@@ -46,12 +35,6 @@ object Directions {
     val game2 = object : NavigationCommand {
         override val name: String
             get() = "game2"
-        override val arguments: List<NamedNavArgument>
-            get() = emptyList()
-    }
-    val profile = object : NavigationCommand {
-        override val name: String
-            get() = "profile"
         override val arguments: List<NamedNavArgument>
             get() = emptyList()
     }

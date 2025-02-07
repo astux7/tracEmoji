@@ -9,9 +9,8 @@ import com.basta.guessemoji.presentation.earn.EarnViewModel
 import com.basta.guessemoji.presentation.game.GameUseCase
 import com.basta.guessemoji.presentation.game.colortap.ColorTapViewModel
 import com.basta.guessemoji.presentation.game.pickcolor.PickAColorGameViewModel
+import com.basta.guessemoji.presentation.menu.MenuViewModel
 import com.basta.guessemoji.presentation.play.HomeViewModel
-import com.basta.guessemoji.presentation.profile.ProfileViewModel
-import com.basta.guessemoji.presentation.settings.SettingsViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -41,9 +40,8 @@ object KoinModule {
 //                activity ?: throw IllegalStateException("No active Activity found")
 //            }
 
-            viewModel { SettingsViewModel() }
             viewModel { PickAColorGameViewModel(get(), get()) }
-            viewModel { ProfileViewModel(get()) }
+            viewModel { MenuViewModel(get()) }
             viewModel { HomeViewModel(get()) }
             viewModel { EarnViewModel(get()) }
             viewModel { ColorTapViewModel(get(), get()) }

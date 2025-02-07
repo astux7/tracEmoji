@@ -7,5 +7,6 @@ interface UserPreferenceRepository {
     fun addCredits(credit: Int)
     fun removeCredits(credit: Int)
     fun updateLevel(level: Int)
+    fun updateLives(lives: Int)
     fun wipeData()
 }

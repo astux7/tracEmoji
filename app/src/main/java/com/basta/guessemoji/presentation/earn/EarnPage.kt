@@ -31,7 +31,7 @@ fun EarnPage(
     val lifecycleOwner = LocalLifecycleOwner.current
     val context = LocalContext.current
     val activity = context as? Activity
-    val adUnitId = stringResource(id = R.string.reward_ad_one)
+    val adUnitId = stringResource(id = R.string.reward_ad_two)
 
     val state = viewModel.state.collectAsState()
 
@@ -54,21 +54,24 @@ fun EarnPage(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(paddingValues),
+            .padding(paddingValues).padding(horizontal = 32.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top
     ) {
         Text("Your Rewards", fontSize = 20.sp)
         Spacer(modifier = Modifier.height(16.dp))
-        Text("Total earned: " + state.value.totalEarned.toString() + " \uD83E\uDE99")
+        Text("Total earned \uD83E\uDE99: " + state.value.totalEarned.toString())
         Spacer(modifier = Modifier.height(16.dp))
+        Text("Watch an ad and earn coins to use in the game")
+        Spacer(modifier = Modifier.height(16.dp))
+
 
         when (state.value.isAdReady) {
             AdStatus.READY -> {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(8.dp)
+                        .padding(vertical = 8.dp)
                         .border(width = 2.dp, color = borderColor)
                         .padding(8.dp)
                         .clickable { viewModel.showRewardedAd() },
@@ -89,10 +92,10 @@ fun EarnPage(
 
             AdStatus.FAILED -> {
                 Text(
-                    text = "\uD83D\uDE2C Ops! Something went wrong - come back later",
+                    text = "\uD83D\uDE2C Ops! Come back later to retry",
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(8.dp)
+                        .padding(vertical = 8.dp)
                         .border(width = 2.dp, color = borderColor)
                         .padding(8.dp)
                 )
@@ -102,7 +105,7 @@ fun EarnPage(
                 Text(
                     text = "⏳ Loading ...", modifier = Modifier
                         .fillMaxWidth()
-                        .padding(8.dp)
+                        .padding(vertical = 8.dp)
                         .border(width = 2.dp, color = borderColor)
                         .padding(8.dp)
                 )
