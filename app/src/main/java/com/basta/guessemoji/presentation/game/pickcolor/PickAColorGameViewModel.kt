@@ -26,6 +26,7 @@ class PickAColorGameViewModel(
     val state: StateFlow<PickAColorGameState> = _state.asStateFlow()
     private var generatedGame = mutableStateOf<GameEntry?>(null)
     private var currentGameId by mutableIntStateOf(userUseCase.getLevel())
+    private var currentLives by mutableIntStateOf(userUseCase.getLives())
 
     fun startGame() {
         _state.update {
@@ -33,7 +34,8 @@ class PickAColorGameViewModel(
                 pageState = PageState.Start,
                 errorType = null,
                 message = null,
-                level = currentGameId + 1
+                level = currentGameId + 1,
+                lives = currentLives
             )
         }
     }
@@ -46,18 +48,22 @@ class PickAColorGameViewModel(
                 errorType = null,
                 message = null,
                 level = currentGameId + 1,
+                lives = currentLives,
                 emojis = generatedGame.value?.characters ?: emptyList()
             )
         }
     }
 
     fun gameTimeOut() {
+        userUseCase.removeLive(1)
+        currentLives--
         _state.update {
             it.copy(
                 pageState = PageState.End,
                 errorType = null,
                 message = null,
                 level = currentGameId,
+                lives = currentLives,
                 emojis = generatedGame.value?.characters ?: emptyList(),
             )
         }
@@ -89,12 +95,15 @@ class PickAColorGameViewModel(
             }
 
         } else {
+            userUseCase.removeLive(1)
+            currentLives--
             _state.update {
                 it.copy(
                     pageState = PageState.Error,
                     errorType = ErrorType.BadAnswer,
                     message = null,
                     level = currentGameId,
+                    lives = currentLives,
                     emojis = generatedGame.value?.characters ?: emptyList()
                 )
             }

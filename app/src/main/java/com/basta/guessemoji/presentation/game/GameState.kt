@@ -7,6 +7,7 @@ data class PickAColorGameState(
     val errorType: ErrorType? = null,
     val message: String? = null,
     val level: Int? = null,
+    val lives: Int? = null,
     val credits: Int? = null,
     val emojis: List<String> = emptyList(),
 )
@@ -16,11 +17,11 @@ data class TapColorGameState(
     val errorType: ErrorType? = null,
     val message: String? = null,
     val level: Int? = null,
+    val lives: Int? = null,
     val credits: Int? = null,
     val emojis: List<String> = emptyList(),
     val totalColoredEmoji: Int = 0,
     val totalGuessedEmoji: Int = 0,
-    val totalLives: Int = 3,
     val selectedColor: Color? = null,
 )
 

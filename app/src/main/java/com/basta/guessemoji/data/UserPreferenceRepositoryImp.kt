@@ -38,7 +38,6 @@ class UserPreferenceRepositoryImp(
     private val dataStore: DataStore<Preferences> = context.dataStore
 
     init {
-        Log.d("ASTA +", "setUpCacheMap")
         setUpCacheMap()
     }
 
@@ -47,34 +46,39 @@ class UserPreferenceRepositoryImp(
             supervisorScope {
                 try {
                     cachedMap = getUserInto().first().toMutablePreferences()
-                } catch (e: Exception) {
-
+                } catch (_: Exception) {
                 }
             }
         }
     }
 
     private fun getCredit() =
-        cachedMap?.get(getPreferences(PREFERENCE_KEY_PREFIX + CREDITS_TOTAL)) ?: "0"
+        cachedMap?.get(getPreferences(PREFERENCE_KEY_PREFIX + CREDITS_TOTAL)) ?: "15"
 
     private fun getLevel() =
         cachedMap?.get(getPreferences(PREFERENCE_KEY_PREFIX + GAME_LEVEL)) ?: "0"
 
+    private fun getLastSeen() =
+        cachedMap?.get(getPreferences(PREFERENCE_KEY_PREFIX + LAST_SEEN))
+            ?: System.currentTimeMillis().toString()
+
     private fun getLives() =
-        cachedMap?.get(getPreferences(PREFERENCE_KEY_PREFIX + USER_LIVES)) ?: "0"
+        cachedMap?.get(getPreferences(PREFERENCE_KEY_PREFIX + USER_LIVES)) ?: "3"
 
 
     override fun getUser(): User {
-        var level: String? = getLevel()
-        var credit: String? = getCredit()
-        var lives: String? = getLives()
+        val level: String = getLevel()
+        val credit: String = getCredit()
+        val lives: String = getLives()
+        val lastSeen: String = getLastSeen()
 
-        Log.d("getUser", "Credit: $credit, Level: $level, lives: $lives")
+        Log.d("getUser", "Credit: $credit, Level: $level, lives: $lives , last seen : $lastSeen")
 
         return User(
-            credit?.toIntOrNull() ?: 0,
-            level?.toIntOrNull() ?: 0,
-            lives?.toIntOrNull() ?: 0
+            credit.toIntOrNull() ?: 0,
+            level.toIntOrNull() ?: 0,
+            lives.toIntOrNull() ?: 0,
+            lastSeen.toLongOrNull() ?: 0
         )
     }
 
@@ -100,7 +104,7 @@ class UserPreferenceRepositoryImp(
                         getPreferences(PREFERENCE_KEY_PREFIX + CREDITS_TOTAL),
                         credit.toString()
                     )
-                } catch (e: Exception) {
+                } catch (_: Exception) {
                 }
             }
         }
@@ -118,8 +122,25 @@ class UserPreferenceRepositoryImp(
                         getPreferences(PREFERENCE_KEY_PREFIX + GAME_LEVEL),
                         level.toString()
                     )
-                } catch (e: Exception) {
-                    0
+                } catch (_: Exception) {
+                }
+            }
+        }
+    }
+
+    override fun updateLastSeen() {
+        cachedMap?.let {
+            externalScope.launch {
+                try {
+                    dataStore.edit { preferences ->
+                        preferences[getPreferences(PREFERENCE_KEY_PREFIX + GAME_LEVEL)] =
+                            System.currentTimeMillis().toString()
+                    }
+                    cachedMap?.set(
+                        getPreferences(PREFERENCE_KEY_PREFIX + GAME_LEVEL),
+                        System.currentTimeMillis().toString()
+                    )
+                } catch (_: Exception) {
                 }
             }
         }
@@ -137,14 +158,34 @@ class UserPreferenceRepositoryImp(
                         getPreferences(PREFERENCE_KEY_PREFIX + USER_LIVES),
                         lives.toString()
                     )
-                } catch (e: Exception) {
-                    0
+                } catch (_: Exception) {
                 }
             }
         }
     }
 
-    override fun removeCredits(credit: Int) {
+    override fun removeLives(lives: Int) {
+        val currentLives = getLives()
+        val newLives = ((currentLives.toIntOrNull() ?: 0) - lives).toString()
+        cachedMap?.let {
+            externalScope.launch {
+                try {
+                    dataStore.edit { preferences ->
+                        val currentLives = getLives()
+                        preferences[getPreferences(PREFERENCE_KEY_PREFIX + USER_LIVES)] =
+                            newLives
+                    }
+                    cachedMap?.set(
+                        getPreferences(PREFERENCE_KEY_PREFIX + USER_LIVES),
+                        newLives
+                    )
+                } catch (_: Exception) {
+                }
+            }
+        }
+    }
+
+    override fun updateCredits(credit: Int) {
         cachedMap?.let {
             externalScope.launch {
                 try {
@@ -152,28 +193,28 @@ class UserPreferenceRepositoryImp(
                         preferences.remove(getPreferences(PREFERENCE_KEY_PREFIX + CREDITS_TOTAL))
                     }
                     cachedMap?.remove(getPreferences(PREFERENCE_KEY_PREFIX + CREDITS_TOTAL))
-                } catch (e: Exception) {
+                } catch (_: Exception) {
                 }
             }
         }
     }
 
     override fun wipeData() {
-        // cachedMap?.let {
-        externalScope.launch {
-            try {
-                dataStore.edit { preferences ->
-                    val keys = preferences.asMap().keys.filter {
-                        it.name.startsWith(PREFERENCE_KEY_PREFIX)
+        cachedMap?.let {
+            externalScope.launch {
+                try {
+                    dataStore.edit { preferences ->
+                        val keys = preferences.asMap().keys.filter {
+                            it.name.startsWith(PREFERENCE_KEY_PREFIX)
+                        }
+                        for (key in keys) {
+                            preferences.remove(key)
+                        }
                     }
-                    for (key in keys) {
-                        preferences.remove(key)
-                    }
+                    cachedMap?.clear()
+                } catch (_: Exception) {
                 }
-                cachedMap?.clear()
-            } catch (e: Exception) {
             }
-            //    }
         }
         setUpCacheMap()
     }

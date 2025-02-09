@@ -28,7 +28,8 @@ class ColorTapViewModel(
     private var currentGameId by mutableIntStateOf(userUseCase.getLevel())
     private var totalGuessed by mutableIntStateOf(0)
     private var totalColors by mutableIntStateOf(0)
-    private var totalLives by mutableIntStateOf(3)
+    private var currentLives by mutableIntStateOf(userUseCase.getLives())
+
 
     fun startGame() {
         _state.update {
@@ -36,14 +37,14 @@ class ColorTapViewModel(
                 pageState = PageState.Start,
                 errorType = null,
                 message = null,
-                level = currentGameId + 1
+                level = currentGameId + 1,
+                lives = currentLives
             )
         }
     }
 
     fun loadGame() {
         totalGuessed = 0
-        totalLives = 3
         generatedGame.value = gameUseCase.generateSliderGame()
         totalColors = generatedGame.value?.colorsCharacters?.size ?: 0
         _state.update {
@@ -52,23 +53,26 @@ class ColorTapViewModel(
                 errorType = null,
                 message = null,
                 level = currentGameId + 1,
+                lives = currentLives,
                 emojis = generatedGame.value?.characters ?: emptyList(),
                 totalColoredEmoji = totalColors,
                 totalGuessedEmoji = totalGuessed,
                 selectedColor = generatedGame.value?.colors?.first(),
-                totalLives = totalLives
             )
         }
     }
 
     fun gameTimeOut() {
+        userUseCase.removeLive(1)
+        currentLives--
         _state.update {
             it.copy(
                 pageState = PageState.End,
                 level = currentGameId,
                 emojis = generatedGame.value?.characters ?: emptyList(),
                 totalColoredEmoji = generatedGame.value?.colorsCharacters?.size ?: 0,
-                selectedColor = generatedGame.value?.colors?.first()
+                selectedColor = generatedGame.value?.colors?.first(),
+                lives = currentLives
             )
         }
     }
@@ -99,12 +103,13 @@ class ColorTapViewModel(
             }
 
         } else {
+            userUseCase.removeLive(1)
+            currentLives--
             _state.update {
-                totalLives--
                 it.copy(
-                    errorType =if (totalLives > 0) null else ErrorType.BadAnswer,
-                    pageState = if (totalLives > 0) PageState.Loaded else PageState.Error,
-                    totalLives = totalLives,
+                    errorType =if (currentLives > 0) null else ErrorType.BadAnswer,
+                    pageState = if (currentLives > 0) PageState.Loaded else PageState.Error,
+                    lives = currentLives
                 )
             }
         }

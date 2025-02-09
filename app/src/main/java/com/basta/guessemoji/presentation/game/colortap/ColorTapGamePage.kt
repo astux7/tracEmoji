@@ -38,6 +38,7 @@ import com.basta.guessemoji.common.Constants.TAP_COLOR_TIMER
 import com.basta.guessemoji.components.EmojiSlideShow
 import com.basta.guessemoji.components.LivesAndAmountRow
 import com.basta.guessemoji.components.LottieAnimationLoader
+import com.basta.guessemoji.navigation.Directions
 import com.basta.guessemoji.presentation.game.ErrorType
 import com.basta.guessemoji.presentation.game.PageState
 import com.basta.guessemoji.presentation.game.ui.CongratsBox
@@ -105,14 +106,16 @@ fun ColorTapGamePage(
 
                     state.value.selectedColor?.let {
                         LivesAndAmountRow(
-                            lives = state.value.totalLives,
+                            lives = state.value.lives ?: 0,
                             amount = state.value.totalColoredEmoji,
                             found = state.value.totalGuessedEmoji,
                             selectedColor = it
                         )
                     }
 
-                    EmojiSlideShow(state.value.emojis, onAction = { emoji -> viewModel.submitAnswer(emoji)})
+                    EmojiSlideShow(
+                        state.value.emojis,
+                        onAction = { emoji -> viewModel.submitAnswer(emoji) })
 
                 }
 
@@ -150,26 +153,47 @@ fun ColorTapGamePage(
                             .padding(20.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        timeCalculator = TAP_COLOR_TIMER
-                        selectedColor = null
-                        Text(
-                            text = stringResource(id = R.string.game_color_description_title),
-                            modifier = Modifier.padding(bottom = 8.dp),
-                            fontSize = 20.sp,
-                            textAlign = TextAlign.Center
-                        )
-                        Text(
-                            text = stringResource(id = R.string.game_tap_color_description),
-                            modifier = Modifier.padding(bottom = 8.dp),
-                            textAlign = TextAlign.Center
-                        )
-                        Button(
-                            modifier = Modifier.fillMaxWidth(),
-                            onClick = {
-                                viewModel.loadGame()
+                        if ((state.value.lives ?: 0) > 0) {
+                            timeCalculator = TAP_COLOR_TIMER
+                            selectedColor = null
+                            Text(
+                                text = stringResource(id = R.string.game_color_description_title),
+                                modifier = Modifier.padding(bottom = 8.dp),
+                                fontSize = 20.sp,
+                                textAlign = TextAlign.Center
+                            )
+                            Text(
+                                text = stringResource(id = R.string.game_tap_color_description),
+                                modifier = Modifier.padding(bottom = 8.dp),
+                                textAlign = TextAlign.Center
+                            )
+                            Button(
+                                modifier = Modifier.fillMaxWidth(),
+                                onClick = {
+                                    viewModel.loadGame()
+                                }
+                            ) {
+                                Text(text = stringResource(id = R.string.go_label))
                             }
-                        ) {
-                            Text(text = stringResource(id = R.string.go_label))
+                        } else {
+                            Text(
+                                text = "\uD83D\uDC94 Oh no!",
+                                modifier = Modifier.padding(bottom = 8.dp),
+                                fontSize = 20.sp,
+                                textAlign = TextAlign.Center
+                            )
+                            Text(
+                                text = "You used all ❤\uFE0F lives, click for ➕ more.",
+                                modifier = Modifier.padding(bottom = 8.dp),
+                                textAlign = TextAlign.Center
+                            )
+                            Button(
+                                modifier = Modifier.fillMaxWidth(),
+                                onClick = {
+                                    navController.navigate(Directions.earn.name)
+                                }) {
+                                Text("➕ Add more")
+                            }
                         }
                     }
                 }

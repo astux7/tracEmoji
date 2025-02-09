@@ -51,129 +51,135 @@ fun MenuPage(
 ) {
     val context = LocalContext.current
 
-    Column(
-        Modifier
-            .fillMaxSize()
-            .padding(paddingValues)
-    ) {
-        Box(Modifier,contentAlignment = Alignment.TopStart) {
+    Box(Modifier.fillMaxSize()) {
+        BackButton(navController)
 
-            Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.TopStart) {
-                BackButton(navController)
-            }
+        Column(
+            Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+        ) {
+            Box(Modifier, contentAlignment = Alignment.TopStart) {
 
-            Box(
-                modifier = Modifier
-                    .padding(top = 40.dp)
-                    .fillMaxWidth()
-                    .height(250.dp)
-                    .padding(horizontal = 64.dp)
-                    .border(
-                        BorderStroke(2.dp, MaterialTheme.colorScheme.onBackground),
-                        shape = RoundedCornerShape(16.dp)
-                    )
-                    .clip(RoundedCornerShape(16.dp))
-                    .padding(4.dp),
-                contentAlignment = Alignment.TopCenter
-            ) {
-                Column(
-                    Modifier.padding(vertical = 4.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Top
+                Box(
+                    modifier = Modifier
+                        .padding(top = 40.dp)
+                        .fillMaxWidth()
+                        .height(250.dp)
+                        .padding(horizontal = 64.dp)
+                        .border(
+                            BorderStroke(2.dp, MaterialTheme.colorScheme.onBackground),
+                            shape = RoundedCornerShape(16.dp)
+                        )
+                        .clip(RoundedCornerShape(16.dp))
+                        .padding(4.dp),
+                    contentAlignment = Alignment.TopCenter
                 ) {
-
-                    Box(
-                        modifier = Modifier
-                            .padding(4.dp)
-                            .size(80.dp)
-                            .border(
-                                BorderStroke(2.dp, borderColor),
-                                shape = RoundedCornerShape(16.dp)
-                            )
-                            .clip(RoundedCornerShape(16.dp))
-                            .aspectRatio(1f),
-                        contentAlignment = Alignment.Center
+                    Column(
+                        Modifier.padding(vertical = 4.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Top
                     ) {
-                        Column(
-                            Modifier.fillMaxWidth(),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Top
+
+                        Box(
+                            modifier = Modifier
+                                .padding(4.dp)
+                                .size(80.dp)
+                                .border(
+                                    BorderStroke(2.dp, borderColor),
+                                    shape = RoundedCornerShape(16.dp)
+                                )
+                                .clip(RoundedCornerShape(16.dp))
+                                .aspectRatio(1f),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Column(
+                                Modifier.fillMaxWidth(),
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.Top
+                            ) {
+                                Text(
+                                    text = viewModel.getProfileIcon(),
+                                    fontSize = 45.sp,
+                                    textAlign = TextAlign.Center,
+                                    color = MaterialTheme.colorScheme.onSurface,
+                                    fontWeight = FontWeight(700)
+                                )
+                            }
+                        }
+
+                        Text(
+                            text = "\uD83C\uDFC6 level ${viewModel.getUserLevel()}",
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White,
+                            modifier = Modifier.padding(vertical = 4.dp)
+                        )
+
+                        Row(
+                            Modifier.padding(all = 8.dp).fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween
                         ) {
                             Text(
-                                text = viewModel.getProfileIcon(),
-                                fontSize = 45.sp,
-                                textAlign = TextAlign.Center,
-                                color = MaterialTheme.colorScheme.onSurface,
-                                fontWeight = FontWeight(700)
+                                text = "\uD83E\uDE99 coins ${viewModel.getUserCredits()} ",
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = Color.White,
+                                modifier = Modifier.padding(vertical = 4.dp)
+                            )
+
+                            Text(
+                                text = "\uD83D\uDED2 Buy",
+                                modifier = Modifier
+                                    .clickable { navController.navigate(Directions.earn.name) }
+                                    .border(2.dp, borderColor, shape = RoundedCornerShape(4.dp))
+                                    .padding(8.dp),
+                                color = Color.White,
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Bold,
+                                textAlign = TextAlign.Center
+                            )
+                        }
+
+                        Row(
+                            Modifier.padding(all = 8.dp).fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Text(
+                                text = "❤\uFE0F lives ${viewModel.getUserLives()} / $MAX_LIVES",
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = Color.White,
+                                modifier = Modifier.padding(vertical = 4.dp)
+                            )
+
+                            Text(
+                                text = "➕ Add",
+                                modifier = Modifier
+                                    .clickable { navController.navigate(Directions.earn.name) }
+                                    .border(2.dp, borderColor, shape = RoundedCornerShape(4.dp))
+                                    .padding(8.dp),
+                                color = Color.White,
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Bold,
+                                textAlign = TextAlign.Center
                             )
                         }
                     }
 
-                    Text(
-                        text = "\uD83C\uDFC6 level ${viewModel.getUserLevel()}",
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.White,
-                        modifier = Modifier.padding(vertical = 4.dp)
-                    )
-
-                    Row(Modifier.padding(all = 8.dp).fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                        Text(
-                            text = "\uD83E\uDE99 coins ${viewModel.getUserCredits()} ",
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = Color.White,
-                            modifier = Modifier.padding(vertical = 4.dp)
-                        )
-
-                        Text(
-                            text = "\uD83D\uDED2 Buy",
-                            modifier = Modifier
-                                .clickable { navController.navigate(Directions.earn.name) }
-                                .border(2.dp, borderColor, shape = RoundedCornerShape(4.dp))
-                                .padding(8.dp),
-                            color = Color.White,
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.Bold,
-                            textAlign = TextAlign.Center
-                        )
-                    }
-
-                    Row(Modifier.padding(all = 8.dp).fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                        Text(
-                            text = "❤\uFE0F lives ${viewModel.getUserLives()} / $MAX_LIVES",
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = Color.White,
-                            modifier = Modifier.padding(vertical = 4.dp)
-                        )
-
-                        Text(
-                            text = "➕ Add",
-                            modifier = Modifier
-                                .clickable { navController.navigate(Directions.earn.name) }
-                                .border(2.dp, borderColor, shape = RoundedCornerShape(4.dp))
-                                .padding(8.dp),
-                            color = Color.White,
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.Bold,
-                            textAlign = TextAlign.Center
-                        )
-                    }
                 }
-
             }
-        }
 
-        CustomButton(Modifier.padding(6.dp), R.string.privacy_policy_label) {
-            context.onLinkClick(Constants.BASE_URL_POLICY)
-        }
+            CustomButton(Modifier.padding(6.dp), R.string.privacy_policy_label) {
+                context.onLinkClick(Constants.BASE_URL_POLICY)
+            }
 
-        Text(
-            text = stringResource(id = R.string.app_version_label, viewModel.appVersion),
-            Modifier.padding(horizontal = 16.dp),
-            fontSize = 10.sp
-        )
+            Text(
+                text = stringResource(id = R.string.app_version_label, viewModel.appVersion),
+                Modifier.padding(horizontal = 16.dp),
+                fontSize = 10.sp
+            )
+        }
     }
 }
 
