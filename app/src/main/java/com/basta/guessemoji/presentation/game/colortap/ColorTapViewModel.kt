@@ -43,23 +43,37 @@ class ColorTapViewModel(
         }
     }
 
-    fun loadGame() {
-        totalGuessed = 0
-        generatedGame.value = gameUseCase.generateSliderGame()
-        totalColors = generatedGame.value?.colorsCharacters?.size ?: 0
+    private fun noLivesGame() {
         _state.update {
             it.copy(
-                pageState = PageState.Loaded,
+                pageState = PageState.Start,
                 errorType = null,
                 message = null,
-                level = currentGameId + 1,
-                lives = currentLives,
-                emojis = generatedGame.value?.characters ?: emptyList(),
-                totalColoredEmoji = totalColors,
-                totalGuessedEmoji = totalGuessed,
-                selectedColor = generatedGame.value?.colors?.first(),
+                level = currentGameId,
+                lives = currentLives
             )
         }
+    }
+
+    fun loadGame() {
+        if (currentLives > 0) {
+            totalGuessed = 0
+            generatedGame.value = gameUseCase.generateSliderGame()
+            totalColors = generatedGame.value?.colorsCharacters?.size ?: 0
+            _state.update {
+                it.copy(
+                    pageState = PageState.Loaded,
+                    errorType = null,
+                    message = null,
+                    level = currentGameId + 1,
+                    lives = currentLives,
+                    emojis = generatedGame.value?.characters ?: emptyList(),
+                    totalColoredEmoji = totalColors,
+                    totalGuessedEmoji = totalGuessed,
+                    selectedColor = generatedGame.value?.colors?.first(),
+                )
+            }
+        } else noLivesGame()
     }
 
     fun gameTimeOut() {

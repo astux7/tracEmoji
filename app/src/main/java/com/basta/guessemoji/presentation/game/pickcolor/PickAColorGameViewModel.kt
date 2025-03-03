@@ -40,18 +40,32 @@ class PickAColorGameViewModel(
         }
     }
 
-    fun loadGame() {
-        generatedGame.value = gameUseCase.generateSingleExclusionColorGame()
+    private fun noLivesGame() {
         _state.update {
             it.copy(
-                pageState = PageState.Loaded,
+                pageState = PageState.Start,
                 errorType = null,
                 message = null,
-                level = currentGameId + 1,
-                lives = currentLives,
-                emojis = generatedGame.value?.characters ?: emptyList()
+                level = currentGameId,
+                lives = currentLives
             )
         }
+    }
+
+    fun loadGame() {
+        if (currentLives > 0) {
+            generatedGame.value = gameUseCase.generateSingleExclusionColorGame()
+            _state.update {
+                it.copy(
+                    pageState = PageState.Loaded,
+                    errorType = null,
+                    message = null,
+                    level = currentGameId + 1,
+                    lives = currentLives,
+                    emojis = generatedGame.value?.characters ?: emptyList()
+                )
+            }
+        } else noLivesGame()
     }
 
     fun gameTimeOut() {
