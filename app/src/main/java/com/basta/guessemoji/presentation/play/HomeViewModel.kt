@@ -18,7 +18,8 @@ class HomeViewModel(
             it.copy(
                 lives = getUserLives(),
                 coins = getUserCredits(),
-                level = getUserLevel()
+                level = getUserLevel(),
+                boughtTapGame = hasBoughtTapGame()
             )
         }
     }
@@ -28,4 +29,6 @@ class HomeViewModel(
     private fun getUserCredits() = userUseCase.getCredits()
 
     private fun getUserLives() = userUseCase.getLives()
+
+    private fun hasBoughtTapGame() = userUseCase.hasBoughtTapGame()
 }

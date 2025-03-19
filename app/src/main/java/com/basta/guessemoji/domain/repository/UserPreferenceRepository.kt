@@ -11,4 +11,5 @@ interface UserPreferenceRepository {
     fun updateLives(lives: Int)
     fun removeLives(lives: Int)
     fun wipeData()
+    fun setBoughtTapGame()
 }

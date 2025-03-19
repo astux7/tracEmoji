@@ -33,16 +33,23 @@ import androidx.compose.ui.unit.sp
 import com.basta.guessemoji.R
 import com.basta.guessemoji.common.Constants
 import com.basta.guessemoji.common.Constants.MAX_LIVES
+import com.basta.guessemoji.common.EmojiConstants.BROKEN_HEART_EMOJI
+import com.basta.guessemoji.common.EmojiConstants.CART_EMOJI
+import com.basta.guessemoji.common.EmojiConstants.COIN_EMOJI
+import com.basta.guessemoji.common.EmojiConstants.HEART_EMOJI
+import com.basta.guessemoji.common.EmojiConstants.PLUS_EMOJI
+import com.basta.guessemoji.common.EmojiConstants.TROPHY_EMOJI
+import com.basta.guessemoji.common.ProfileIconStyle
+import com.basta.guessemoji.common.ProfileLevelStyle
 import com.basta.guessemoji.common.utils.onLinkClick
 import com.basta.guessemoji.components.CustomButton
 import com.basta.guessemoji.navigation.Directions
 import com.basta.guessemoji.presentation.ui.BackButton
+import com.basta.guessemoji.ui.theme.ButtonBorder
 import com.basta.guessemoji.ui.theme.borderColor
 import org.koin.androidx.compose.getViewModel
 
 // https://stackoverflow.com/questions/32413731/color-for-unicode-emoji
-// TraceMoji
-
 @Composable
 fun MenuPage(
     navController: NavController = NavController(LocalContext.current),
@@ -68,10 +75,11 @@ fun MenuPage(
                         .height(250.dp)
                         .padding(horizontal = 64.dp)
                         .border(
-                            BorderStroke(2.dp, MaterialTheme.colorScheme.onBackground),
+                            BorderStroke(2.dp, ButtonBorder),
                             shape = RoundedCornerShape(16.dp)
                         )
                         .clip(RoundedCornerShape(16.dp))
+                        .background(borderColor)
                         .padding(4.dp),
                     contentAlignment = Alignment.TopCenter
                 ) {
@@ -86,10 +94,11 @@ fun MenuPage(
                                 .padding(4.dp)
                                 .size(80.dp)
                                 .border(
-                                    BorderStroke(2.dp, borderColor),
+                                    BorderStroke(2.dp, MaterialTheme.colorScheme.background),
                                     shape = RoundedCornerShape(16.dp)
                                 )
                                 .clip(RoundedCornerShape(16.dp))
+                                .background(color = MaterialTheme.colorScheme.background)
                                 .aspectRatio(1f),
                             contentAlignment = Alignment.Center
                         ) {
@@ -100,28 +109,33 @@ fun MenuPage(
                             ) {
                                 Text(
                                     text = viewModel.getProfileIcon(),
-                                    fontSize = 45.sp,
-                                    textAlign = TextAlign.Center,
-                                    color = MaterialTheme.colorScheme.onSurface,
-                                    fontWeight = FontWeight(700)
+                                    style = ProfileIconStyle(),
                                 )
                             }
                         }
 
                         Text(
-                            text = "\uD83C\uDFC6 level ${viewModel.getUserLevel()}",
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = Color.White,
+                            text = stringResource(
+                                id = R.string.level_text_label,
+                                TROPHY_EMOJI,
+                                viewModel.getUserLevel()
+                            ),
+                            style = ProfileLevelStyle(),
                             modifier = Modifier.padding(vertical = 4.dp)
                         )
 
                         Row(
-                            Modifier.padding(all = 8.dp).fillMaxWidth(),
+                            Modifier
+                                .padding(all = 8.dp)
+                                .fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
                             Text(
-                                text = "\uD83E\uDE99 coins ${viewModel.getUserCredits()} ",
+                                text = stringResource(
+                                    id = R.string.coins_text_label,
+                                    COIN_EMOJI,
+                                    viewModel.getUserCredits()
+                                ),
                                 fontSize = 16.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = Color.White,
@@ -129,12 +143,14 @@ fun MenuPage(
                             )
 
                             Text(
-                                text = "\uD83D\uDED2 Buy",
+                                text = stringResource(id = R.string.buy_label, CART_EMOJI),
                                 modifier = Modifier
                                     .clickable { navController.navigate(Directions.earn.name) }
-                                    .border(2.dp, borderColor, shape = RoundedCornerShape(4.dp))
+                                    .clip(RoundedCornerShape(4.dp))
+                                    .border(1.dp, ButtonBorder, shape = RoundedCornerShape(4.dp))
+                                    .background(MaterialTheme.colorScheme.background)
                                     .padding(8.dp),
-                                color = Color.White,
+                                color = MaterialTheme.colorScheme.onSurface,
                                 fontSize = 14.sp,
                                 fontWeight = FontWeight.Bold,
                                 textAlign = TextAlign.Center
@@ -142,11 +158,18 @@ fun MenuPage(
                         }
 
                         Row(
-                            Modifier.padding(all = 8.dp).fillMaxWidth(),
+                            Modifier
+                                .padding(all = 8.dp)
+                                .fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
                             Text(
-                                text = "❤\uFE0F lives ${viewModel.getUserLives()} / $MAX_LIVES",
+                                text = stringResource(
+                                    id = R.string.lives_text_label,
+                                    if (viewModel.getUserLives() > 0) HEART_EMOJI else BROKEN_HEART_EMOJI,
+                                    viewModel.getUserLives(),
+                                    MAX_LIVES
+                                ),
                                 fontSize = 16.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = Color.White,
@@ -154,12 +177,14 @@ fun MenuPage(
                             )
 
                             Text(
-                                text = "➕ Add",
+                                text = stringResource(id = R.string.add_label, PLUS_EMOJI),
                                 modifier = Modifier
                                     .clickable { navController.navigate(Directions.earn.name) }
-                                    .border(2.dp, borderColor, shape = RoundedCornerShape(4.dp))
+                                    .clip(RoundedCornerShape(4.dp))
+                                    .border(1.dp, ButtonBorder, shape = RoundedCornerShape(4.dp))
+                                    .background(MaterialTheme.colorScheme.background)
                                     .padding(8.dp),
-                                color = Color.White,
+                                color = MaterialTheme.colorScheme.onSurface,
                                 fontSize = 14.sp,
                                 fontWeight = FontWeight.Bold,
                                 textAlign = TextAlign.Center
@@ -170,7 +195,11 @@ fun MenuPage(
                 }
             }
 
-            CustomButton(Modifier.padding(6.dp), R.string.privacy_policy_label) {
+            CustomButton(Modifier.padding(horizontal = 6.dp).padding(top = 6.dp), R.string.rewards_page_label) {
+                navController.navigate(Directions.earn.name)
+            }
+
+            CustomButton(Modifier.padding(horizontal = 6.dp), R.string.privacy_policy_label) {
                 context.onLinkClick(Constants.BASE_URL_POLICY)
             }
 

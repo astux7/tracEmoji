@@ -19,6 +19,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.basta.guessemoji.common.EmojiConstants.BROKEN_HEART_EMOJI
+import com.basta.guessemoji.common.EmojiConstants.HEART_EMOJI
 import com.basta.guessemoji.common.utils.toEmoji
 
 @Composable
@@ -47,7 +49,7 @@ fun LivesAndAmountRow(
                     val isHeartBroken =
                         index >= lives // If heart index is greater or equal to lives, it's broken
                     val heartIcon =
-                        if (isHeartBroken) "💔" else "❤️" // Use broken heart if it's lost
+                        if (isHeartBroken) BROKEN_HEART_EMOJI else HEART_EMOJI // Use broken heart if it's lost
 
                     Text(
                         text = heartIcon,

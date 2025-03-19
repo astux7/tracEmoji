@@ -1,6 +1,5 @@
 package com.basta.guessemoji.presentation.game.pickcolor
 
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -10,10 +9,8 @@ import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -24,14 +21,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.basta.guessemoji.R
 import com.basta.guessemoji.common.Constants.PICK_COLOR_TIMER
@@ -40,15 +34,18 @@ import com.basta.guessemoji.components.EmojiWithFill
 import com.basta.guessemoji.components.LottieAnimationLoader
 import com.basta.guessemoji.navigation.Directions
 import com.basta.guessemoji.presentation.game.ErrorType
+import com.basta.guessemoji.presentation.game.InfoBox
 import com.basta.guessemoji.presentation.game.PageState
 import com.basta.guessemoji.presentation.game.ui.CongratsBox
 import com.basta.guessemoji.presentation.game.ui.FailBox
 import com.basta.guessemoji.presentation.ui.BackButton
 import com.basta.guessemoji.presentation.ui.LevelBox
+import com.basta.guessemoji.presentation.ui.LivesBox
 import com.basta.guessemoji.presentation.ui.TimerBox
 import kotlinx.coroutines.delay
 import org.koin.androidx.compose.getViewModel
 
+// GAME 1 - Pick a color
 @Composable
 fun PickAColorGamePage(
     navController: NavController = NavController(LocalContext.current),
@@ -79,7 +76,18 @@ fun PickAColorGamePage(
     Box(Modifier.fillMaxSize()) {
         BackButton(navController)
 
-        LevelBox(state.value.level.toString())
+        if(state.value.pageState == PageState.Success)
+          LevelBox(state.value.level.toString())
+        else
+            Box(
+                Modifier
+                    .fillMaxWidth()
+                    .height(80.dp), contentAlignment = Alignment.CenterEnd
+            ) {
+                LivesBox(state.value.lives ?: 0) {
+                    navController.navigate(Directions.earn.name)
+                }
+            }
 
         Column(
             Modifier
@@ -142,54 +150,23 @@ fun PickAColorGamePage(
                 }
 
                 PageState.Start -> {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth(0.7f)
-                            .border(2.dp, Color.White, RoundedCornerShape(16.dp))
-                            .clip(RoundedCornerShape(16.dp))
-                            .padding(20.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        if (state.value.lives ?: 0 > 0) {
-                            Text(
-                                text = stringResource(id = R.string.game_color_description_title),
-                                modifier = Modifier.padding(bottom = 8.dp),
-                                fontSize = 20.sp,
-                                textAlign = TextAlign.Center
-                            )
-                            Text(
-                                text = stringResource(id = R.string.game_one_color_description),
-                                modifier = Modifier.padding(bottom = 8.dp),
-                                textAlign = TextAlign.Center
-                            )
-                            Button(
-                                modifier = Modifier.fillMaxWidth(),
-                                onClick = {
-                                    timeCalculator = PICK_COLOR_TIMER
-                                    selectedColor = null
-                                    viewModel.loadGame()
-                                }) {
-                                Text(text = stringResource(id = R.string.go_label))
-                            }
-                        } else {
-                            Text(
-                                text = "\uD83D\uDC94 Oh no!",
-                                modifier = Modifier.padding(bottom = 8.dp),
-                                fontSize = 20.sp,
-                                textAlign = TextAlign.Center
-                            )
-                            Text(
-                                text = "You used all ❤\uFE0F lives, click for ➕ more.",
-                                modifier = Modifier.padding(bottom = 8.dp),
-                                textAlign = TextAlign.Center
-                            )
-                            Button(
-                                modifier = Modifier.fillMaxWidth(),
-                                onClick = {
-                                    navController.navigate(Directions.earn.name)
-                                }) {
-                                Text("➕ Add more")
-                            }
+                    if ((state.value.lives ?: 0) > 0) {
+                        InfoBox(
+                            title = stringResource(id = R.string.game_color_description_title),
+                            text = stringResource(id = R.string.game_one_color_description),
+                            buttonLabel = R.string.go_label,
+                        ) {
+                            timeCalculator = PICK_COLOR_TIMER
+                            selectedColor = null
+                            viewModel.loadGame()
+                        }
+                    } else {
+                        InfoBox(
+                            title = stringResource(id = R.string.game_failed),
+                            text = stringResource(id = R.string.add_lives_to_play_label),
+                            buttonLabel = R.string.ok_label
+                        ) {
+                            navController.navigate(Directions.home.name)
                         }
                     }
                 }

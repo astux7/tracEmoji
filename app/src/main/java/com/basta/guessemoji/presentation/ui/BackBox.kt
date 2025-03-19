@@ -26,12 +26,15 @@ import com.basta.guessemoji.ui.theme.MenuColor
 fun BackButton(navController: NavController) {
     Box(
         Modifier
-            .padding(vertical = 40.dp)
+            .padding(vertical = 48.dp)
             .offset(x = (-3).dp)
-            .size(40.dp)
+            .size(48.dp)
             .clip(RoundedCornerShape(topEnd = 16.dp, bottomEnd = 16.dp))
             .border(2.dp, Color.White, RoundedCornerShape(topEnd = 16.dp, bottomEnd = 16.dp))
-            .background(MenuColor),
+            .background(MenuColor)
+            .clickable {
+                navController.navigate(Directions.home.name)
+            },
         contentAlignment = Alignment.Center,
     ) {
         Text(
@@ -42,9 +45,6 @@ fun BackButton(navController: NavController) {
             fontWeight = FontWeight(700),
             modifier = Modifier
                 .padding(bottom = 4.dp)
-                .clickable {
-                    navController.navigate(Directions.home.name)
-                }
         )
     }
 }
