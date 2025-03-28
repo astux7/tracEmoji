@@ -45,7 +45,7 @@ import com.basta.guessemoji.presentation.ui.TimerBox
 import kotlinx.coroutines.delay
 import org.koin.androidx.compose.getViewModel
 
-// GAME 1 - Pick a color
+// GAME 1 - Pick a color which is not in 3 emojis
 @Composable
 fun PickAColorGamePage(
     navController: NavController = NavController(LocalContext.current),
