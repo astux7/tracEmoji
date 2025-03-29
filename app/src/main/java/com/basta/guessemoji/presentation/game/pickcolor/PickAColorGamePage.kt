@@ -34,7 +34,7 @@ import com.basta.guessemoji.components.EmojiWithFill
 import com.basta.guessemoji.components.LottieAnimationLoader
 import com.basta.guessemoji.navigation.Directions
 import com.basta.guessemoji.presentation.game.ErrorType
-import com.basta.guessemoji.presentation.game.InfoBox
+import com.basta.guessemoji.presentation.game.ui.InfoBox
 import com.basta.guessemoji.presentation.game.PageState
 import com.basta.guessemoji.presentation.game.ui.CongratsBox
 import com.basta.guessemoji.presentation.game.ui.FailBox
@@ -162,7 +162,7 @@ fun PickAColorGamePage(
                         }
                     } else {
                         InfoBox(
-                            title = stringResource(id = R.string.game_failed),
+                            title = stringResource(id = R.string.no_lives),
                             text = stringResource(id = R.string.add_lives_to_play_label),
                             buttonLabel = R.string.ok_label
                         ) {

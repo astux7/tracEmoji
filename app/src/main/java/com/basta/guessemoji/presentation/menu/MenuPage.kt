@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.sp
 import com.basta.guessemoji.R
 import com.basta.guessemoji.common.Constants
 import com.basta.guessemoji.common.Constants.MAX_LIVES
+import com.basta.guessemoji.common.EmojiConstants
 import com.basta.guessemoji.common.EmojiConstants.BROKEN_HEART_EMOJI
 import com.basta.guessemoji.common.EmojiConstants.CART_EMOJI
 import com.basta.guessemoji.common.EmojiConstants.COIN_EMOJI
@@ -128,47 +129,14 @@ fun MenuPage(
                             Modifier
                                 .padding(all = 8.dp)
                                 .fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
                                 text = stringResource(
                                     id = R.string.coins_text_label,
                                     COIN_EMOJI,
                                     viewModel.getUserCredits()
-                                ),
-                                fontSize = 16.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = Color.White,
-                                modifier = Modifier.padding(vertical = 4.dp)
-                            )
-
-                            Text(
-                                text = stringResource(id = R.string.buy_label, CART_EMOJI),
-                                modifier = Modifier
-                                    .clickable { navController.navigate(Directions.earn.name) }
-                                    .clip(RoundedCornerShape(4.dp))
-                                    .border(1.dp, ButtonBorder, shape = RoundedCornerShape(4.dp))
-                                    .background(MaterialTheme.colorScheme.background)
-                                    .padding(8.dp),
-                                color = MaterialTheme.colorScheme.onSurface,
-                                fontSize = 14.sp,
-                                fontWeight = FontWeight.Bold,
-                                textAlign = TextAlign.Center
-                            )
-                        }
-
-                        Row(
-                            Modifier
-                                .padding(all = 8.dp)
-                                .fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            Text(
-                                text = stringResource(
-                                    id = R.string.lives_text_label,
-                                    if (viewModel.getUserLives() > 0) HEART_EMOJI else BROKEN_HEART_EMOJI,
-                                    viewModel.getUserLives(),
-                                    MAX_LIVES
                                 ),
                                 fontSize = 16.sp,
                                 fontWeight = FontWeight.Bold,
@@ -190,12 +158,70 @@ fun MenuPage(
                                 textAlign = TextAlign.Center
                             )
                         }
+
+                        Row(
+                            Modifier
+                                .padding(all = 8.dp)
+                                .fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = stringResource(
+                                    id = R.string.lives_text_label,
+                                    if (viewModel.getUserLives() > 0) HEART_EMOJI else BROKEN_HEART_EMOJI,
+                                    viewModel.getUserLives(),
+                                    MAX_LIVES
+                                ),
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = Color.White,
+                                modifier = Modifier.padding(vertical = 4.dp)
+                            )
+
+                            if (viewModel.getUserLives() < MAX_LIVES) {
+
+                                Text(
+                                    text = stringResource(id = R.string.buy_label, CART_EMOJI),
+                                    modifier = Modifier
+                                        .clickable { navController.navigate(Directions.earn.name) }
+                                        .clip(RoundedCornerShape(4.dp))
+                                        .border(
+                                            1.dp,
+                                            ButtonBorder,
+                                            shape = RoundedCornerShape(4.dp)
+                                        )
+                                        .background(MaterialTheme.colorScheme.background)
+                                        .padding(8.dp),
+                                    color = MaterialTheme.colorScheme.onSurface,
+                                    fontSize = 14.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    textAlign = TextAlign.Center
+                                )
+                            } else
+                                Text(
+                                    text = EmojiConstants.MARKED_EMOJI,
+                                    modifier = Modifier
+                                        .padding(4.dp)
+                                        .clip(RoundedCornerShape(4.dp))
+                                        .padding(8.dp)
+                                        .clickable(
+                                            enabled = false, onClick = {}),
+                                    textAlign = TextAlign.End,
+                                    color = MaterialTheme.colorScheme.onBackground
+                                )
+                        }
                     }
 
                 }
             }
 
-            CustomButton(Modifier.padding(horizontal = 6.dp).padding(top = 6.dp), R.string.rewards_page_label) {
+            CustomButton(
+                Modifier
+                    .padding(horizontal = 6.dp)
+                    .padding(top = 6.dp),
+                R.string.rewards_page_label
+            ) {
                 navController.navigate(Directions.earn.name)
             }
 

@@ -227,7 +227,7 @@ fun EarnPage(
                 Box(modifier = Modifier.weight(1f), contentAlignment = Alignment.CenterEnd) {
                     if (state.value.lives < MAX_LIVES) {
                         Text(
-                            text = stringResource(id = R.string.add_label, PLUS_EMOJI),
+                            text = stringResource(id = R.string.buy_label, CART_EMOJI),
                             modifier = Modifier
                                 .padding(4.dp)
                                 .clip(RoundedCornerShape(4.dp))
