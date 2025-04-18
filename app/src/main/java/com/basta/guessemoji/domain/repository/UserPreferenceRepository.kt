@@ -4,7 +4,6 @@ import com.basta.guessemoji.domain.model.User
 
 interface UserPreferenceRepository {
     fun getUser(): User
-    fun addCredits(credit: Int)
     fun updateCredits(credit: Int)
     fun updateLevel(level: Int)
     fun updateLastSeen()

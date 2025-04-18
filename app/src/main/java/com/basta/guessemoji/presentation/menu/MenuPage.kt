@@ -60,7 +60,7 @@ fun MenuPage(
     val context = LocalContext.current
 
     Box(Modifier.fillMaxSize()) {
-        BackButton(navController)
+        BackButton { navController.navigate(Directions.home.name) }
 
         Column(
             Modifier
@@ -95,7 +95,7 @@ fun MenuPage(
                                 .padding(4.dp)
                                 .size(80.dp)
                                 .border(
-                                    BorderStroke(2.dp, MaterialTheme.colorScheme.background),
+                                    BorderStroke(2.dp, ButtonBorder),
                                     shape = RoundedCornerShape(16.dp)
                                 )
                                 .clip(RoundedCornerShape(16.dp))

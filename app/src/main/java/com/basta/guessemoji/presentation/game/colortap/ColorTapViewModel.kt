@@ -32,6 +32,7 @@ class ColorTapViewModel(
 
 
     fun startGame() {
+        userUseCase.checkForUpdates()
         _state.update {
             it.copy(
                 pageState = PageState.Start,
@@ -127,5 +128,10 @@ class ColorTapViewModel(
                 )
             }
         }
+    }
+
+    fun removeLive() { // back button
+        userUseCase.removeLive(1)
+        currentLives--
     }
 }

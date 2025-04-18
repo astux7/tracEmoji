@@ -31,7 +31,7 @@ class UserPreferenceRepositoryImp(
         const val APP_DATA_STORE = "tracemoji"
         const val CREDITS_TOTAL = "credits_total"
         const val GAME_LEVEL = "game_level"
-        const val USER_LIVES = "user_lives"
+        const val USER_LIVES = "lives"
         const val LAST_SEEN = "last_seen"
         const val TODAY_REWARDS_LIST = "today_rewards_list"
         const val BOUGHT_TAP_GAME = "bought_tap_game"
@@ -43,6 +43,16 @@ class UserPreferenceRepositoryImp(
 
     init {
         setUpCacheMap()
+        if (getLives() == null) {
+            updateLives(MAX_LIVES)
+        }
+        if (getLevel() == null) {
+            updateLevel(INITIAL_LEVEL)
+        }
+
+        if (getCredit() == null) {
+            updateCredits(INITIAL_CREDITS)
+        }
     }
 
     private fun setUpCacheMap() {
@@ -54,10 +64,12 @@ class UserPreferenceRepositoryImp(
                 }
             }
         }
+
     }
 
     private fun getCredit() =
         cachedMap?.get(getPreferences(PREFERENCE_KEY_PREFIX + CREDITS_TOTAL)) ?: INITIAL_CREDITS.toString()
+
 
     private fun getLevel() =
         cachedMap?.get(getPreferences(PREFERENCE_KEY_PREFIX + GAME_LEVEL)) ?: INITIAL_LEVEL.toString()
@@ -96,26 +108,8 @@ class UserPreferenceRepositoryImp(
         } else {
             throw e
         }
-
-    }.map { it }
-
-
-    override fun addCredits(credit: Int) {
-        cachedMap?.let {
-            externalScope.launch {
-                try {
-                    dataStore.edit { preferences ->
-                        preferences[getPreferences(PREFERENCE_KEY_PREFIX + CREDITS_TOTAL)] =
-                            credit.toString()
-                    }
-                    cachedMap?.set(
-                        getPreferences(PREFERENCE_KEY_PREFIX + CREDITS_TOTAL),
-                        credit.toString()
-                    )
-                } catch (_: Exception) {
-                }
-            }
-        }
+    }.map {
+        it
     }
 
     override fun updateLevel(level: Int) {
@@ -157,14 +151,22 @@ class UserPreferenceRepositoryImp(
     override fun updateLives(lives: Int) {
         cachedMap?.let {
             externalScope.launch {
+                val currentLives = cachedMap?.get(getPreferences(PREFERENCE_KEY_PREFIX + USER_LIVES))?.toInt() ?: MAX_LIVES
+                val totalLives = when (currentLives) {
+                    3 -> currentLives
+                    2 -> currentLives + lives
+                    1 -> currentLives + lives
+                    else -> currentLives
+                }
+                val max3lives = if (totalLives > MAX_LIVES) MAX_LIVES else totalLives
                 try {
                     dataStore.edit { preferences ->
                         preferences[getPreferences(PREFERENCE_KEY_PREFIX + USER_LIVES)] =
-                            lives.toString()
+                            max3lives.toString()
                     }
                     cachedMap?.set(
                         getPreferences(PREFERENCE_KEY_PREFIX + USER_LIVES),
-                        lives.toString()
+                        max3lives.toString()
                     )
                 } catch (_: Exception) {
                 }
@@ -174,7 +176,7 @@ class UserPreferenceRepositoryImp(
 
     override fun removeLives(lives: Int) {
         val currentLives = getLives()
-        val newLives = ((currentLives.toIntOrNull() ?: 0) - lives).toString()
+        val newLives = (currentLives.toInt() - lives).toString()
         cachedMap?.let {
             externalScope.launch {
                 try {
@@ -194,14 +196,27 @@ class UserPreferenceRepositoryImp(
 
     override fun updateCredits(credit: Int) {
         cachedMap?.let {
+            Log.d("ASTA ", " I AM HERE  AAA - 1")
+
             externalScope.launch {
-                val totalCredit = getCredit() + credit
+                Log.d("ASTA ", " I AM HERE  AAA - 2")
+
                 try {
+                    Log.d("ASTA ", " I AM HERE  AAA - 3 ")
+
+                    val existingCredit = getCredit()
+                    val totalCredit = existingCredit.toInt() + credit
+                    Log.d("ASTA ", " I AM HERE  AAA -  $totalCredit")
+
                     dataStore.edit { preferences ->
-                        preferences[getPreferences(PREFERENCE_KEY_PREFIX + CREDITS_TOTAL)] = totalCredit
+                        preferences[getPreferences(PREFERENCE_KEY_PREFIX + CREDITS_TOTAL)] = totalCredit.toString() // ???
                     }
-                    cachedMap?.set(getPreferences(PREFERENCE_KEY_PREFIX + CREDITS_TOTAL), totalCredit)
+                    cachedMap?.set(getPreferences(PREFERENCE_KEY_PREFIX + CREDITS_TOTAL), totalCredit.toString())
+
+                    Log.d("ASTA ", " AAA - NOT FAIL = $totalCredit")
+
                 } catch (_: Exception) {
+                    Log.d("ASTA ", "AAA -  FAIl")
                 }
             }
         }

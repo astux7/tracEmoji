@@ -23,7 +23,7 @@ import com.basta.guessemoji.navigation.Directions
 import com.basta.guessemoji.ui.theme.MenuColor
 
 @Composable
-fun BackButton(navController: NavController) {
+fun BackButton(action: () -> Unit) {
     Box(
         Modifier
             .padding(vertical = 48.dp)
@@ -33,7 +33,7 @@ fun BackButton(navController: NavController) {
             .border(2.dp, Color.White, RoundedCornerShape(topEnd = 16.dp, bottomEnd = 16.dp))
             .background(MenuColor)
             .clickable {
-                navController.navigate(Directions.home.name)
+                action?.invoke()
             },
         contentAlignment = Alignment.Center,
     ) {

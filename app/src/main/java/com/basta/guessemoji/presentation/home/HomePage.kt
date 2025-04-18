@@ -1,4 +1,4 @@
-package com.basta.guessemoji.presentation.play
+package com.basta.guessemoji.presentation.home
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -20,7 +20,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -33,6 +32,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
 import androidx.navigation.NavController
 import com.basta.guessemoji.R
 import com.basta.guessemoji.common.Constants.DEBUG_ON
@@ -50,6 +50,7 @@ import com.basta.guessemoji.common.EmojiConstants.TROPHY_EMOJI
 import com.basta.guessemoji.common.EmojiConstants.UNLOCKED_EMOJI
 import com.basta.guessemoji.common.TopMenuIconStyle
 import com.basta.guessemoji.common.TopMenuItemStyle
+import com.basta.guessemoji.common.utils.OnLifecycleEvent
 import com.basta.guessemoji.components.CustomAlertDialog
 import com.basta.guessemoji.components.TextBoxWithIcon
 import com.basta.guessemoji.components.ads.PageAdBanner
@@ -61,7 +62,7 @@ import org.koin.androidx.compose.getViewModel
 
 // https://emojipedia.org/nature#mammals-marsupials
 @Composable
-fun PlayPage(
+fun HomePage(
     navController: NavController = NavController(LocalContext.current),
     paddingValues: PaddingValues,
     viewModel: HomeViewModel = getViewModel()
@@ -71,7 +72,12 @@ fun PlayPage(
     var gameName by remember { mutableStateOf("") }
     val state = viewModel.state.collectAsState()
 
-    LaunchedEffect(Unit) { viewModel.setUp() }
+    OnLifecycleEvent { _, event ->
+        when (event) {
+            Lifecycle.Event.ON_RESUME -> viewModel.setUp()
+            else -> {}
+        }
+    }
 
     Box(
         Modifier

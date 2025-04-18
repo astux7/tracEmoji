@@ -26,7 +26,7 @@ import com.basta.guessemoji.common.utils.toEmoji
 import com.basta.guessemoji.components.EmojiWithFill
 
 @Composable
-fun CongratsBox(correctColor: Color?, emojis: String, nextAction: () -> Unit) {
+fun CongratsBox(correctColor: Color?, emojis: String? = null, text: String? = null, nextAction: () -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxWidth(0.8f)
@@ -48,7 +48,19 @@ fun CongratsBox(correctColor: Color?, emojis: String, nextAction: () -> Unit) {
             modifier = Modifier.padding(bottom = 32.dp)
         )
 
-        EmojiWithFill(emojis)
+        emojis?.let {
+            EmojiWithFill(emojis)
+        }
+
+        text?.let {
+            Text(
+                text = it,
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.Gray,
+                modifier = Modifier.padding(vertical = 16.dp)
+            )
+        }
 
         correctColor?.let {
             Text(
@@ -79,6 +91,7 @@ private fun CongratsBoxPreview() {
     CongratsBox(
         correctColor = null,
         emojis = "You won!",
+        text = "You get them all!",
         nextAction = {}
     )
 }

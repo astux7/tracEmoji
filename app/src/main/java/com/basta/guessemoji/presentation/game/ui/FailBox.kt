@@ -3,6 +3,7 @@ package com.basta.guessemoji.presentation.game.ui
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -19,6 +20,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -27,7 +29,7 @@ import com.basta.guessemoji.common.utils.toEmoji
 import com.basta.guessemoji.components.EmojiWithFill
 
 @Composable
-fun FailBox(title: String, color: Color?, emojis: String, nextAction: () -> Unit) {
+fun FailBox(title: String, color: Color?, emojis: String? = null, text: String? = null,  nextAction: () -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxWidth(0.8f)
@@ -39,7 +41,8 @@ fun FailBox(title: String, color: Color?, emojis: String, nextAction: () -> Unit
             )
             .border(2.dp, Color.White, RoundedCornerShape(16.dp))
             .padding(20.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Top
     ) {
         Text(
             text = title,
@@ -49,7 +52,9 @@ fun FailBox(title: String, color: Color?, emojis: String, nextAction: () -> Unit
             modifier = Modifier.padding(bottom = 32.dp)
         )
 
-        EmojiWithFill(emojis)
+        emojis?.let {
+            EmojiWithFill(emojis)
+        }
 
         color?.let {
             Text(
@@ -57,6 +62,17 @@ fun FailBox(title: String, color: Color?, emojis: String, nextAction: () -> Unit
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color.LightGray,
+                modifier = Modifier.padding(vertical = 16.dp)
+            )
+        }
+
+        text?.let {
+            Text(
+                text = text,
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.LightGray,
+                textAlign = TextAlign.Center,
                 modifier = Modifier.padding(vertical = 16.dp)
             )
         }

@@ -1,4 +1,4 @@
-package com.basta.guessemoji.presentation.play
+package com.basta.guessemoji.presentation.home
 
 import androidx.lifecycle.ViewModel
 import com.basta.guessemoji.presentation.UserUseCase
@@ -14,6 +14,11 @@ class HomeViewModel(
     val state: StateFlow<UserState> = _state.asStateFlow()
 
     fun setUp() {
+        checkForUpdates()
+    }
+
+    private fun checkForUpdates() {
+        userUseCase.checkForUpdates()
         _state.update {
             it.copy(
                 lives = getUserLives(),

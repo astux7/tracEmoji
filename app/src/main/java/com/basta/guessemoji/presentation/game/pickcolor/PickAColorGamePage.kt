@@ -74,10 +74,10 @@ fun PickAColorGamePage(
     }
 
     Box(Modifier.fillMaxSize()) {
-        BackButton(navController)
 
-        if(state.value.pageState == PageState.Success)
-          LevelBox(state.value.level.toString())
+
+        if (state.value.pageState == PageState.Success)
+            LevelBox(state.value.level.toString())
         else
             Box(
                 Modifier
@@ -208,6 +208,13 @@ fun PickAColorGamePage(
                     )
                 }
             }
+        }
+        BackButton {
+            if (state.value.pageState == PageState.Loaded) {
+                navController.navigate(Directions.home.name)
+                viewModel.removeLive()
+            } else
+                navController.navigate(Directions.home.name)
         }
     }
 }

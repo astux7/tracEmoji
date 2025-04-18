@@ -8,7 +8,7 @@ import com.basta.guessemoji.presentation.menu.MenuPage
 import com.basta.guessemoji.presentation.earn.EarnPage
 import com.basta.guessemoji.presentation.game.colortap.ColorTapGamePage
 import com.basta.guessemoji.presentation.game.pickcolor.PickAColorGamePage
-import com.basta.guessemoji.presentation.play.PlayPage
+import com.basta.guessemoji.presentation.home.HomePage
 
 fun NavGraphBuilder.buildTheGraph(navController: NavController, padding: PaddingValues) {
     composable(Directions.menu.name) {
@@ -23,7 +23,7 @@ fun NavGraphBuilder.buildTheGraph(navController: NavController, padding: Padding
     }
 
     composable(Directions.home.name) {
-        PlayPage(navController, padding)
+        HomePage(navController, padding)
     }
 
     composable(Directions.game1.name) {

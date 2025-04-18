@@ -59,7 +59,7 @@ fun InfoBox(title: String, text: String, buttonLabel: Int, action: () -> Unit) {
                 .padding(top = 8.dp)
                 .fillMaxWidth(),
             onClick = {  action.invoke() },
-            colors = ButtonDefaults.buttonColors(containerColor = Color.LightGray, contentColor = Color.Black),
+            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF00008B), contentColor = Color.White),
             border = BorderStroke(1.dp, Color.Gray),
         ) {
             Text(text = stringResource(id = buttonLabel))

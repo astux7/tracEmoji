@@ -62,7 +62,7 @@ class EarnViewModel(
     fun showRewardedAd() {
         val onReward = { amount: Int ->
             rewards += amount
-            userUseCase.addCredits(rewards)
+            userUseCase.updateCredits(rewards)
             _state.update { it.copy(totalEarned = rewards) }
         }
         rewardedAdHandler?.showAd(onReward)

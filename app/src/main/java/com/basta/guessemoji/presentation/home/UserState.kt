@@ -1,4 +1,4 @@
-package com.basta.guessemoji.presentation.play
+package com.basta.guessemoji.presentation.home
 
 data class UserState(
     val level: Int = 0,

@@ -29,6 +29,7 @@ class PickAColorGameViewModel(
     private var currentLives by mutableIntStateOf(userUseCase.getLives())
 
     fun startGame() {
+        userUseCase.checkForUpdates()
         _state.update {
             it.copy(
                 pageState = PageState.Start,
@@ -66,6 +67,11 @@ class PickAColorGameViewModel(
                 )
             }
         } else noLivesGame()
+    }
+
+    fun removeLive() { // back button
+        userUseCase.removeLive(1)
+        currentLives--
     }
 
     fun gameTimeOut() {

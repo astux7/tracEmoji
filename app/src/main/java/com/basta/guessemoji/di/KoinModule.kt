@@ -10,7 +10,7 @@ import com.basta.guessemoji.presentation.game.GameUseCase
 import com.basta.guessemoji.presentation.game.colortap.ColorTapViewModel
 import com.basta.guessemoji.presentation.game.pickcolor.PickAColorGameViewModel
 import com.basta.guessemoji.presentation.menu.MenuViewModel
-import com.basta.guessemoji.presentation.play.HomeViewModel
+import com.basta.guessemoji.presentation.home.HomeViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob

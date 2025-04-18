@@ -7,7 +7,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
@@ -38,9 +40,9 @@ import com.basta.guessemoji.common.EmojiConstants.HEART_EMOJI
 import com.basta.guessemoji.common.EmojiConstants.LIGHT_BULB_EMOJI
 import com.basta.guessemoji.common.EmojiConstants.MARKED_EMOJI
 import com.basta.guessemoji.common.EmojiConstants.PLAY_EMOJI
-import com.basta.guessemoji.common.EmojiConstants.PLUS_EMOJI
 import com.basta.guessemoji.common.EmojiConstants.TIME_EMOJI
 import com.basta.guessemoji.common.EmojiConstants.UNLOCKED_EMOJI
+import com.basta.guessemoji.navigation.Directions
 import com.basta.guessemoji.presentation.ui.BackButton
 import com.basta.guessemoji.ui.theme.ButtonBorder
 import com.basta.guessemoji.ui.theme.borderColor
@@ -77,9 +79,9 @@ fun EarnPage(
     }
 
     Box(Modifier.fillMaxSize()) {
-        BackButton(navController)
         Column(
             modifier = Modifier
+                .verticalScroll(rememberScrollState())
                 .fillMaxSize()
                 .padding(paddingValues)
                 .padding(horizontal = 0.dp),
@@ -122,7 +124,14 @@ fun EarnPage(
                         stringResource(
                             id = R.string.your_rewards_info_text_label,
                             LIGHT_BULB_EMOJI
-                        ), fontSize = 12.sp
+                        ), fontSize = 10.sp
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Text(
+                        stringResource(
+                            id = R.string.your_rewards_lives_info_text_label,
+                            HEART_EMOJI
+                        ), fontSize = 10.sp
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                 }
@@ -226,6 +235,7 @@ fun EarnPage(
 
                 Box(modifier = Modifier.weight(1f), contentAlignment = Alignment.CenterEnd) {
                     if (state.value.lives < MAX_LIVES) {
+                        if (state.value.totalEarned.toInt() >= REWARD_COINS)
                         Text(
                             text = stringResource(id = R.string.buy_label, CART_EMOJI),
                             modifier = Modifier
@@ -239,12 +249,28 @@ fun EarnPage(
                                 .background(MaterialTheme.colorScheme.background)
                                 .padding(8.dp)
                                 .clickable(
-                                    enabled = (viewModel.state.value.lives
-                                        ?: 0) < MAX_LIVES && viewModel.state.value.totalEarned ?: 0 >= REWARD_COINS,
+                                    enabled = viewModel.state.value.lives < MAX_LIVES && viewModel.state.value.totalEarned >= REWARD_COINS,
                                     onClick = { viewModel.buyLives() }),
                             textAlign = TextAlign.End,
                             color = MaterialTheme.colorScheme.onSurface
                         )
+                        else
+                            Text(
+                                text = stringResource(
+                                    id = R.string.missing_label,
+                                    REWARD_COINS,
+                                    COIN_EMOJI
+                                ),
+                                modifier = Modifier
+                                    .padding(4.dp)
+                                    .padding(8.dp)
+                                    .clickable(
+                                        enabled = false, onClick = {}),
+                                textAlign = TextAlign.End,
+                                fontSize = 10.sp,
+                                color = MaterialTheme.colorScheme.onBackground
+                            )
+
                     } else {
                         Text(
                             text = MARKED_EMOJI,
@@ -298,7 +324,7 @@ fun EarnPage(
                                 color = MaterialTheme.colorScheme.onBackground
                             )
                         }
-                        viewModel.state.value.totalEarned ?: 0 >= UNLOCK_LEVEL2_COINS -> {
+                        viewModel.state.value.totalEarned >= UNLOCK_LEVEL2_COINS -> {
                             Text(
                                 text = stringResource(
                                     id = R.string.buy_label,
@@ -343,5 +369,6 @@ fun EarnPage(
                 }
             }
         }
+        BackButton { navController.navigate(Directions.home.name) }
     }
 }

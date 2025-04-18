@@ -1,6 +1,5 @@
 package com.basta.guessemoji.presentation.game.colortap
 
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -10,10 +9,8 @@ import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -24,14 +21,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.basta.guessemoji.R
 import com.basta.guessemoji.common.Constants.TAP_COLOR_TIMER
@@ -43,8 +37,10 @@ import com.basta.guessemoji.presentation.game.ErrorType
 import com.basta.guessemoji.presentation.game.PageState
 import com.basta.guessemoji.presentation.game.ui.CongratsBox
 import com.basta.guessemoji.presentation.game.ui.FailBox
+import com.basta.guessemoji.presentation.game.ui.InfoBox
 import com.basta.guessemoji.presentation.ui.BackButton
 import com.basta.guessemoji.presentation.ui.LevelBox
+import com.basta.guessemoji.presentation.ui.LivesBox
 import com.basta.guessemoji.presentation.ui.TimerBox
 import kotlinx.coroutines.delay
 import org.koin.androidx.compose.getViewModel
@@ -66,7 +62,7 @@ fun ColorTapGamePage(
 
     LaunchedEffect(startTimer) {
         if (startTimer) {
-            // Run the timer until 10 seconds is reached
+            // Run the timer until 30 seconds is reached
             while (timeCalculator > 0) {
                 delay(1000) // Delay for 1 second
                 timeCalculator -= 1
@@ -77,9 +73,27 @@ fun ColorTapGamePage(
     }
 
     Box(Modifier.fillMaxSize()) {
-        BackButton(navController)
+        BackButton {
+            if (state.value.pageState == PageState.Loaded) {
+                viewModel.removeLive()
+                navController.navigate(Directions.home.name)
+            } else
+                navController.navigate(Directions.home.name)
+        }
 
-        LevelBox(state.value.level.toString())
+
+        if (state.value.pageState in arrayListOf(PageState.Loaded))
+            LevelBox(state.value.level.toString())
+        else
+            Box(
+                Modifier
+                    .fillMaxWidth()
+                    .height(80.dp), contentAlignment = Alignment.CenterEnd
+            ) {
+                LivesBox(state.value.lives ?: 0) {
+                    navController.navigate(Directions.earn.name)
+                }
+            }
 
         Column(
             Modifier
@@ -103,6 +117,9 @@ fun ColorTapGamePage(
                         delay(400)
                         isVisibleTimer = true
                     }
+                    Spacer(modifier = Modifier
+                        .fillMaxWidth()
+                        .height(4.dp))
 
                     state.value.selectedColor?.let {
                         LivesAndAmountRow(
@@ -132,7 +149,8 @@ fun ColorTapGamePage(
                                 FailBox(
                                     title = stringResource(id = R.string.game_failed),
                                     color = null,
-                                    emojis = "\uD83D\uDC94 \uD83D\uDC94 \uD83D\uDC94 \n",
+                                    emojis = "",
+                                    text = "You have not got all correct emojis.",
                                     nextAction = {
                                         timeCalculator = TAP_COLOR_TIMER
                                         selectedColor = null
@@ -145,55 +163,25 @@ fun ColorTapGamePage(
                 }
 
                 PageState.Start -> {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth(0.7f)
-                            .border(2.dp, Color.White, RoundedCornerShape(16.dp))
-                            .clip(RoundedCornerShape(16.dp))
-                            .padding(20.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        if ((state.value.lives ?: 0) > 0) {
-                            timeCalculator = TAP_COLOR_TIMER
-                            selectedColor = null
-                            Text(
-                                text = stringResource(id = R.string.game_color_description_title),
-                                modifier = Modifier.padding(bottom = 8.dp),
-                                fontSize = 20.sp,
-                                textAlign = TextAlign.Center
-                            )
-                            Text(
-                                text = stringResource(id = R.string.game_tap_color_description),
-                                modifier = Modifier.padding(bottom = 8.dp),
-                                textAlign = TextAlign.Center
-                            )
-                            Button(
-                                modifier = Modifier.fillMaxWidth(),
-                                onClick = {
-                                    viewModel.loadGame()
-                                }
-                            ) {
-                                Text(text = stringResource(id = R.string.go_label))
-                            }
-                        } else {
-                            Text(
-                                text = "\uD83D\uDC94 Oh no!",
-                                modifier = Modifier.padding(bottom = 8.dp),
-                                fontSize = 20.sp,
-                                textAlign = TextAlign.Center
-                            )
-                            Text(
-                                text = "You used all ❤\uFE0F lives, click for ➕ more.",
-                                modifier = Modifier.padding(bottom = 8.dp),
-                                textAlign = TextAlign.Center
-                            )
-                            Button(
-                                modifier = Modifier.fillMaxWidth(),
-                                onClick = {
-                                    navController.navigate(Directions.earn.name)
-                                }) {
-                                Text("➕ Add more")
-                            }
+                    timeCalculator = TAP_COLOR_TIMER
+                    selectedColor = null
+                    startTimer = false
+
+                    if ((state.value.lives ?: 0) > 0) {
+                        InfoBox(
+                            title = stringResource(id = R.string.game_color_description_title),
+                            text = stringResource(id = R.string.game_tap_color_description),
+                            buttonLabel = R.string.go_label,
+                        ) {
+                            viewModel.loadGame()
+                        }
+                    } else {
+                        InfoBox(
+                            title = stringResource(id = R.string.no_lives),
+                            text = stringResource(id = R.string.add_lives_to_play_label),
+                            buttonLabel = R.string.ok_label
+                        ) {
+                            navController.navigate(Directions.home.name)
                         }
                     }
                 }
@@ -207,9 +195,9 @@ fun ColorTapGamePage(
                     timeCalculator = TAP_COLOR_TIMER
 
                     FailBox(
-                        title = stringResource(id = R.string.game_timeout),
+                        title = stringResource(id = R.string.game_failed),
                         color = selectedColor,
-                        emojis = "⏰",
+                        text = stringResource(id = R.string.tap_fail_text_label),
                         nextAction = {
                             viewModel.loadGame()
                         }
@@ -227,7 +215,7 @@ fun ColorTapGamePage(
 
                     CongratsBox(
                         correctColor = null,
-                        emojis = "You won!",
+                        text = stringResource(id = R.string.tap_won_text_label),
                         nextAction = {
                             viewModel.loadGame()
                         }

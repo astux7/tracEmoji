@@ -11,9 +11,9 @@
     <string name="privacy_policy_label">🛡️ Privacy Policy</string>
     <string name="rewards_page_label">🪙 Rewards Page</string>
     <string name="arrow_label">Arrow right</string>
-    <string name="game_one_color_description">Pick ONE color from \n\n 🟨 🟦 🟥 🟩\n\n that is NOT the main color of displayed emojis.\n</string>
-    <string name="game_tap_color_description">Tap the emoji matching the displayed color\n 🟨 🟦 🟥 🟩.\n\n Your correct taps will be shown as (correct/total).\n</string>
-    <string name="game_color_description_title">💡 Tip 💡\n</string>
+    <string name="game_one_color_description">Pick ONE color from \n 🟨 🟦 🟥 🟩\n that is NOT the main color of displayed emojis.</string>
+    <string name="game_tap_color_description">Tap the emoji matching the displayed one color of possible four\n 🟨 🟦 🟥 🟩.\n Your correct taps will be shown as (correct/total).\n</string>
+    <string name="game_color_description_title">💡 Tip 💡</string>
     <string name="reward_ad_one">ca-app-pub-5590715197528572/2337986435</string>
     <string name="reward_ad_two">ca-app-pub-5590715197528572/3267924728</string>
     <string name="reward_ad_three">ca-app-pub-5590715197528572/5738175396</string>
@@ -33,6 +33,8 @@
     <string name="home_locked_label">Locked</string>
     <string name="home_coming_soon_label">Coming soon</string>
     <string name="ok_label">Ok</string>
+    <string name="tap_won_text_label">You get them all!</string>
+    <string name="tap_fail_text_label">Failed to get all correct emojis!</string>
     <string name="unlock_game_label">Unlock %s</string>
     <string name="unlock_game_text_label">You can unlock game when you reach %s level %d or buy with the %d %s coins</string>
     <string name="coming_soon_text_label">Keep an eye on App updates to unlock this game soon</string>
@@ -44,7 +46,8 @@
     <string name="buy_label">%s Buy</string>
     <string name="lives_text_label">%s %d / %d lives</string>
     <string name="your_rewards_label">Your Rewards</string>
-    <string name="your_rewards_info_text_label">%s Watch an ad to earn coins and spend them on perks</string>
+    <string name="your_rewards_info_text_label">%s Watch an ad to earn coins and spend them on perks (not every country/area has ad)</string>
+    <string name="your_rewards_lives_info_text_label">%s 1 live is added every hour (max 3 per day)</string>
     <string name="total_money_label">Total earned: %s %s</string>
     <string name="watch_ad_label">%s Watch ad</string>
     <string name="reward_x_label">Reward %d %s</string>
