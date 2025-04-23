@@ -19,7 +19,14 @@ class EarnViewModel(
     private var lives = 0
     private var hasBoughtTapGame = false
 
-    private val _state = MutableStateFlow(RewardsState(AdStatus.LOADING, totalEarned = rewards, lives = lives, hasBoughtTapGame = hasBoughtTapGame))
+    private val _state = MutableStateFlow(
+        RewardsState(
+            AdStatus.LOADING,
+            totalEarned = rewards,
+            lives = lives,
+            hasBoughtTapGame = hasBoughtTapGame
+        )
+    )
     val state: StateFlow<RewardsState> = _state
 
     fun setUp(activity: Activity?) {
@@ -30,26 +37,45 @@ class EarnViewModel(
         lives = userUseCase.getLives()
         hasBoughtTapGame = userUseCase.hasBoughtTapGame()
         viewModelScope.launch {
-            _state.update { it.copy(totalEarned = rewards, lives = lives, hasBoughtTapGame = hasBoughtTapGame) }
+            _state.update {
+                it.copy(
+                    totalEarned = rewards,
+                    lives = lives,
+                    hasBoughtTapGame = hasBoughtTapGame
+                )
+            }
         }
     }
 
     fun buyLives(amount: Int = 1, cost: Int = -REWARD_COINS) {
         userUseCase.updateCredits(cost)
-        lives = userUseCase.getLives() + amount
-        userUseCase.updateLives(lives)
         rewards += cost
+        userUseCase.updateLives(amount)
+        lives += amount
         viewModelScope.launch {
-            _state.update { it.copy(totalEarned = rewards, lives = lives) }
+            _state.update {
+                it.copy(
+                    totalEarned = rewards,
+                    lives = lives,
+                    hasBoughtTapGame = hasBoughtTapGame
+                )
+            }
         }
     }
 
     fun boughtTapGame() {
         userUseCase.updateCredits(-UNLOCK_LEVEL2_COINS)
+        rewards -= UNLOCK_LEVEL2_COINS
         userUseCase.boughtTapGame()
-        hasBoughtTapGame = userUseCase.hasBoughtTapGame()
+        hasBoughtTapGame = true
         viewModelScope.launch {
-            _state.update { it.copy(totalEarned = rewards - UNLOCK_LEVEL2_COINS, hasBoughtTapGame = hasBoughtTapGame) }
+            _state.update {
+                it.copy(
+                    totalEarned = rewards,
+                    lives = lives,
+                    hasBoughtTapGame = hasBoughtTapGame
+                )
+            }
         }
     }
 

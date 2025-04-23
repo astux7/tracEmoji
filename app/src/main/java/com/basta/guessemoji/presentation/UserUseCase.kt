@@ -2,10 +2,14 @@ package com.basta.guessemoji.presentation
 
 import com.basta.guessemoji.common.Constants.DEBUG_RENEW_LAST_SEEN_5_S
 import com.basta.guessemoji.domain.repository.UserPreferenceRepository
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
-class UserUseCase(private val userRepo: UserPreferenceRepository) {
-    init {
-        checkForUpdates()
+class UserUseCase(private val userRepo: UserPreferenceRepository, private val externalScope: CoroutineScope) {
+    operator fun invoke() {
+        externalScope.launch {
+            userRepo.initialize()
+        }
     }
 
     fun checkForUpdates() {
@@ -39,6 +43,8 @@ class UserUseCase(private val userRepo: UserPreferenceRepository) {
 
     fun getLevel() = userRepo.getUser().level
 
+    fun getUser() = userRepo.getUser()
+
     fun updateLevel(level: Int) = userRepo.updateLevel(level)
 
     fun removeLive(live: Int) = userRepo.removeLives(live)
@@ -53,7 +59,7 @@ class UserUseCase(private val userRepo: UserPreferenceRepository) {
 
     fun hasBoughtTapGame() = userRepo.getUser().boughtTapGame
 
-    fun boughtTapGame() = userRepo.setBoughtTapGame()
+    fun boughtTapGame() = userRepo.setBoughtTapGame("true")
 
     private fun getLastSeen() = userRepo.getUser().lastSeen
 

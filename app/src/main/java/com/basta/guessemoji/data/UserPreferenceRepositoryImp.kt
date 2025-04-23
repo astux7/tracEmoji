@@ -16,9 +16,13 @@ import com.basta.guessemoji.common.Constants.MAX_LIVES
 import com.basta.guessemoji.domain.model.User
 import com.basta.guessemoji.domain.repository.UserPreferenceRepository
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.supervisorScope
 
@@ -28,156 +32,203 @@ class UserPreferenceRepositoryImp(
 ) : UserPreferenceRepository {
     companion object {
         const val PREFERENCE_KEY_PREFIX = "pref_user_"
-        const val APP_DATA_STORE = "tracemoji"
+        const val APP_DATA_STORE = "bla"
         const val CREDITS_TOTAL = "credits_total"
         const val GAME_LEVEL = "game_level"
         const val USER_LIVES = "lives"
         const val LAST_SEEN = "last_seen"
-        const val TODAY_REWARDS_LIST = "today_rewards_list"
         const val BOUGHT_TAP_GAME = "bought_tap_game"
+        const val FIRST_INSTALL = "first_install"
     }
 
     private var cachedMap: MutablePreferences? = null
     private val Context.dataStore by preferencesDataStore(APP_DATA_STORE)
     private val dataStore: DataStore<Preferences> = context.dataStore
 
-    init {
+    private val _userState = MutableStateFlow<User?>(null)
+    val userState: StateFlow<User?> = _userState
+
+    override suspend fun initialize() {
         setUpCacheMap()
-        if (getLives() == null) {
-            updateLives(MAX_LIVES)
-        }
-        if (getLevel() == null) {
-            updateLevel(INITIAL_LEVEL)
+        if (isFirstInstall() == null) {
+            Log.d("kkkk", "FIRST_INSTALL - SET UP ")
+            setFirstInstall()
+            if (getLives() == null) {
+                updateLives(MAX_LIVES, true)
+            }
+            if (getLevel() == null) {
+                updateLevel(INITIAL_LEVEL)
+            }
+            if (getCredit() == null) {
+                updateCredits(INITIAL_CREDITS, true)
+            }
+            if (getBoughtTapGame() == null) {
+                setBoughtTapGame("false")
+            }
+
+
+        } else {
+            Log.d("kkkk", "NOT FIRST INSTALL - SET UP ")
+            getUser()
         }
 
-        if (getCredit() == null) {
-            updateCredits(INITIAL_CREDITS)
+    }
+
+    private fun isFirstInstall() =
+        cachedMap?.get(getPreferences(PREFERENCE_KEY_PREFIX + FIRST_INSTALL)) ?: null
+
+    private fun setFirstInstall() {
+        externalScope.launch {
+            try {
+                dataStore.edit { preferences ->
+                    preferences[getPreferences(PREFERENCE_KEY_PREFIX + FIRST_INSTALL)] =
+                        "false"
+                }
+                cachedMap?.set(
+                    getPreferences(PREFERENCE_KEY_PREFIX + FIRST_INSTALL),
+                    "false"
+                )
+            } catch (_: Exception) {
+                Log.d("kkkk", "FAIl - FIRST_INSTALL")
+            }
         }
     }
 
-    private fun setUpCacheMap() {
+    private suspend fun setUpCacheMap() {
         externalScope.launch {
             supervisorScope {
                 try {
                     cachedMap = getUserInto().first().toMutablePreferences()
                 } catch (_: Exception) {
+                    Log.d("kkkk", "FAIl - setUpCacheMap")
+
                 }
             }
         }
-
     }
 
     private fun getCredit() =
-        cachedMap?.get(getPreferences(PREFERENCE_KEY_PREFIX + CREDITS_TOTAL)) ?: INITIAL_CREDITS.toString()
-
+        cachedMap?.get(getPreferences(PREFERENCE_KEY_PREFIX + CREDITS_TOTAL))
 
     private fun getLevel() =
-        cachedMap?.get(getPreferences(PREFERENCE_KEY_PREFIX + GAME_LEVEL)) ?: INITIAL_LEVEL.toString()
+        cachedMap?.get(getPreferences(PREFERENCE_KEY_PREFIX + GAME_LEVEL))
 
     private fun getLastSeen() =
         cachedMap?.get(getPreferences(PREFERENCE_KEY_PREFIX + LAST_SEEN))
             ?: System.currentTimeMillis().toString()
 
     private fun getLives() =
-        cachedMap?.get(getPreferences(PREFERENCE_KEY_PREFIX + USER_LIVES)) ?: MAX_LIVES.toString()
+        cachedMap?.get(getPreferences(PREFERENCE_KEY_PREFIX + USER_LIVES))
 
-    private fun getBoughtTapGame() = cachedMap?.get(getPreferences(PREFERENCE_KEY_PREFIX + BOUGHT_TAP_GAME)) == true.toString()
-
+    private fun getBoughtTapGame() =
+        cachedMap?.get(getPreferences(PREFERENCE_KEY_PREFIX + BOUGHT_TAP_GAME))
 
     override fun getUser(): User {
-        val level: String = getLevel()
-        val credit: String = getCredit()
-        val lives: String = getLives()
+        val level: String = getLevel() ?: 0.toString()
+        val credit: String = getCredit() ?: 0.toString()
+        val lives: String = getLives() ?: 0.toString()
         val lastSeen: String = getLastSeen()
-        val boughtTapGame: Boolean = getBoughtTapGame()
+        val boughtTapGame: Boolean = (getBoughtTapGame() == "true")
 
-        Log.d("getUser", "Credit: $credit, level: $level, lives: $lives , last seen : $lastSeen , bought tap game: $boughtTapGame")
+        Log.d(
+            "kkkk",
+            "Credit: $credit, level: $level, lives: $lives , last seen : $lastSeen , bought tap game: $boughtTapGame"
+        )
 
         return User(
-            credit.toIntOrNull() ?: 0,
-            level.toIntOrNull() ?: 0,
-            lives.toIntOrNull() ?: 0,
-            lastSeen.toLongOrNull() ?: 0,
+            credit = credit.toIntOrNull() ?: 0,
+            level = level.toIntOrNull() ?: 0,
+            lives = lives.toIntOrNull() ?: 0,
+            lastSeen = lastSeen.toLongOrNull() ?: 0,
             boughtTapGame = boughtTapGame
         )
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     private fun getUserInto() = dataStore.data.catch { e ->
         if (e is IOException) {
             emit(emptyPreferences())
         } else {
             throw e
         }
-    }.map {
+    }.mapLatest {
         it
     }
 
     override fun updateLevel(level: Int) {
-        cachedMap?.let {
-            externalScope.launch {
-                try {
-                    dataStore.edit { preferences ->
-                        preferences[getPreferences(PREFERENCE_KEY_PREFIX + GAME_LEVEL)] =
-                            level.toString()
-                    }
-                    cachedMap?.set(
-                        getPreferences(PREFERENCE_KEY_PREFIX + GAME_LEVEL),
+        externalScope.launch {
+            try {
+                dataStore.edit { preferences ->
+                    preferences[getPreferences(PREFERENCE_KEY_PREFIX + GAME_LEVEL)] =
                         level.toString()
-                    )
-                } catch (_: Exception) {
                 }
+                cachedMap?.set(
+                    getPreferences(PREFERENCE_KEY_PREFIX + GAME_LEVEL),
+                    level.toString()
+                )
+            } catch (_: Exception) {
+                Log.d("kkkk", "FAIl - updateLastSeen")
             }
         }
+        getUser()
     }
 
     override fun updateLastSeen() {
-        cachedMap?.let {
-            externalScope.launch {
-                try {
-                    dataStore.edit { preferences ->
-                        preferences[getPreferences(PREFERENCE_KEY_PREFIX + GAME_LEVEL)] =
-                            System.currentTimeMillis().toString()
-                    }
-                    cachedMap?.set(
-                        getPreferences(PREFERENCE_KEY_PREFIX + GAME_LEVEL),
+        //   cachedMap?.let {
+        externalScope.launch {
+            try {
+                dataStore.edit { preferences ->
+                    preferences[getPreferences(PREFERENCE_KEY_PREFIX + GAME_LEVEL)] =
                         System.currentTimeMillis().toString()
-                    )
-                } catch (_: Exception) {
                 }
+                cachedMap?.set(
+                    getPreferences(PREFERENCE_KEY_PREFIX + GAME_LEVEL),
+                    System.currentTimeMillis().toString()
+                )
+            } catch (_: Exception) {
+                Log.d("kkkk", "FAIl - updateLastSeen")
             }
         }
+        getUser()
+        //  }
     }
 
-    override fun updateLives(lives: Int) {
-        cachedMap?.let {
-            externalScope.launch {
-                val currentLives = cachedMap?.get(getPreferences(PREFERENCE_KEY_PREFIX + USER_LIVES))?.toInt() ?: MAX_LIVES
-                val totalLives = when (currentLives) {
-                    3 -> currentLives
-                    2 -> currentLives + lives
-                    1 -> currentLives + lives
-                    else -> currentLives
-                }
-                val max3lives = if (totalLives > MAX_LIVES) MAX_LIVES else totalLives
-                try {
-                    dataStore.edit { preferences ->
-                        preferences[getPreferences(PREFERENCE_KEY_PREFIX + USER_LIVES)] =
-                            max3lives.toString()
-                    }
-                    cachedMap?.set(
-                        getPreferences(PREFERENCE_KEY_PREFIX + USER_LIVES),
+    override fun updateLives(lives: Int, isFirstTime: Boolean) {
+        //  cachedMap?.let {
+        externalScope.launch {
+            val currentLives =
+                cachedMap?.get(getPreferences(PREFERENCE_KEY_PREFIX + USER_LIVES))?.toInt()
+                    ?: MAX_LIVES
+            var totalLives = when (currentLives.toInt()) {
+                3 -> currentLives.toInt()
+                2 -> currentLives.toInt() + lives.toInt()
+                1 -> currentLives.toInt() + lives.toInt()
+                else -> currentLives.toInt() + lives.toInt()
+            }
+            if (isFirstTime)
+                totalLives = 3
+            val max3lives = if (totalLives > MAX_LIVES) MAX_LIVES.toInt() else totalLives.toInt()
+            try {
+                dataStore.edit { preferences ->
+                    preferences[getPreferences(PREFERENCE_KEY_PREFIX + USER_LIVES)] =
                         max3lives.toString()
-                    )
-                } catch (_: Exception) {
                 }
+                cachedMap?.set(
+                    getPreferences(PREFERENCE_KEY_PREFIX + USER_LIVES),
+                    max3lives.toString()
+                )
+            } catch (_: Exception) {
+                Log.d("kkkk", "FAIl - updateLives")
             }
         }
+        getUser()
+        //   }
     }
 
     override fun removeLives(lives: Int) {
-        val currentLives = getLives()
-        val newLives = (currentLives.toInt() - lives).toString()
-        cachedMap?.let {
+        val currentLives = getLives()?.toIntOrNull() ?: 0
+        val newLives = (currentLives - lives).toString()
+     //   cachedMap?.let {
             externalScope.launch {
                 try {
                     dataStore.edit { preferences ->
@@ -189,37 +240,35 @@ class UserPreferenceRepositoryImp(
                         newLives
                     )
                 } catch (_: Exception) {
+                    Log.d("kkkk", "FAIl - removeLives")
                 }
             }
-        }
+    //    }
+        getUser()
     }
 
-    override fun updateCredits(credit: Int) {
-        cachedMap?.let {
-            Log.d("ASTA ", " I AM HERE  AAA - 1")
-
-            externalScope.launch {
-                Log.d("ASTA ", " I AM HERE  AAA - 2")
-
-                try {
-                    Log.d("ASTA ", " I AM HERE  AAA - 3 ")
-
-                    val existingCredit = getCredit()
-                    val totalCredit = existingCredit.toInt() + credit
-                    Log.d("ASTA ", " I AM HERE  AAA -  $totalCredit")
-
-                    dataStore.edit { preferences ->
-                        preferences[getPreferences(PREFERENCE_KEY_PREFIX + CREDITS_TOTAL)] = totalCredit.toString() // ???
-                    }
-                    cachedMap?.set(getPreferences(PREFERENCE_KEY_PREFIX + CREDITS_TOTAL), totalCredit.toString())
-
-                    Log.d("ASTA ", " AAA - NOT FAIL = $totalCredit")
-
-                } catch (_: Exception) {
-                    Log.d("ASTA ", "AAA -  FAIl")
+    override fun updateCredits(credit: Int, isFirstTime: Boolean) {
+        //  cachedMap?.let {
+        externalScope.launch {
+            try {
+                val existingCredit = getCredit()?.toIntOrNull() ?: 0
+                var totalCredit = existingCredit + credit
+                if (isFirstTime)
+                    totalCredit = credit
+                dataStore.edit { preferences ->
+                    preferences[getPreferences(PREFERENCE_KEY_PREFIX + CREDITS_TOTAL)] =
+                        totalCredit.toString()
                 }
+                cachedMap?.set(
+                    getPreferences(PREFERENCE_KEY_PREFIX + CREDITS_TOTAL),
+                    totalCredit.toString()
+                )
+            } catch (_: Exception) {
+                Log.d("kkkk", "FAIl - updateCredits")
             }
+            //   }
         }
+        getUser()
     }
 
     override fun wipeData() {
@@ -236,29 +285,33 @@ class UserPreferenceRepositoryImp(
                     }
                     cachedMap?.clear()
                 } catch (_: Exception) {
+                    Log.d("kkkk", "FAIl")
                 }
+                setUpCacheMap()
             }
         }
-        setUpCacheMap()
+
     }
 
     private fun getPreferences(key: String) = stringPreferencesKey(key)
 
-    override fun setBoughtTapGame() {
-        cachedMap?.let {
+    override fun setBoughtTapGame(value: String) {
+
             externalScope.launch {
                 try {
                     dataStore.edit { preferences ->
                         preferences[getPreferences(PREFERENCE_KEY_PREFIX + BOUGHT_TAP_GAME)] =
-                            true.toString()
+                            value
                     }
                     cachedMap?.set(
                         getPreferences(PREFERENCE_KEY_PREFIX + BOUGHT_TAP_GAME),
-                        true.toString()
+                        value
                     )
                 } catch (_: Exception) {
+                    Log.d("kkkk", "FAIl - setBoughtTapGame")
                 }
-            }
+                getUser()
+
         }
     }
 }

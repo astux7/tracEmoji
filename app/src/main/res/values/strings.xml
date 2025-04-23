@@ -54,5 +54,5 @@
     <string name="ad_loading_label">%s Loading Ad...</string>
     <string name="ad_error_label">%s Failed to load, try later...</string>
     <string name="unlock_level_2_game">%s Tap Game </string>
-    <string name="add_lives_to_play_label">You\'ve used up all your lives! Add more to keep playing.</string>
+    <string name="add_lives_to_play_label">Add more to keep the fun going.</string>
 </resources>

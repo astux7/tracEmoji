@@ -92,17 +92,6 @@ class ColorTapViewModel(
         }
     }
 
-    fun updateCredits(type: CreditType) {
-        val credit = when(type) {
-            CreditType.ADS -> CreditType.ADS.credit
-            CreditType.FAIL -> CreditType.FAIL.credit
-            CreditType.TIMEOUT -> CreditType.TIMEOUT.credit
-            CreditType.UNLOCK -> CreditType.UNLOCK.credit
-            CreditType.WELCOME -> CreditType.WELCOME.credit
-        }
-        userUseCase.updateCredits(credit)
-    }
-
     fun submitAnswer(emoji: String) {
         if (generatedGame.value?.colorsCharacters?.contains(emoji) == true || totalGuessed == totalColors) {
             totalGuessed++

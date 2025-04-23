@@ -29,7 +29,7 @@ object KoinModule {
     private val useCaseModule: Module
         get() = module {
             factory { GameUseCase(get()) }
-            single { UserUseCase(get()) }
+            single { UserUseCase(get(), get()) }
         }
 
     private val viewModelModule: Module

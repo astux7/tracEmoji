@@ -4,11 +4,12 @@ import com.basta.guessemoji.domain.model.User
 
 interface UserPreferenceRepository {
     fun getUser(): User
-    fun updateCredits(credit: Int)
+    suspend fun initialize()
+    fun updateCredits(credit: Int, isFirstTime: Boolean = false)
     fun updateLevel(level: Int)
     fun updateLastSeen()
-    fun updateLives(lives: Int)
+    fun updateLives(lives: Int, isFirstTime: Boolean = false)
     fun removeLives(lives: Int)
     fun wipeData()
-    fun setBoughtTapGame()
+    fun setBoughtTapGame(value: String)
 }
