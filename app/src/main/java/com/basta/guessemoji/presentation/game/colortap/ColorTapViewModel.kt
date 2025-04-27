@@ -1,6 +1,7 @@
 package com.basta.guessemoji.presentation.game.colortap
 
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -25,13 +26,15 @@ class ColorTapViewModel(
     private val _state = MutableStateFlow(TapColorGameState(pageState = PageState.Loading))
     val state: StateFlow<TapColorGameState> = _state.asStateFlow()
     private var generatedGame = mutableStateOf<GameEntry?>(null)
-    private var currentGameId by mutableIntStateOf(userUseCase.getLevel())
+    private var currentGameId by mutableIntStateOf(0)
     private var totalGuessed by mutableIntStateOf(0)
     private var totalColors by mutableIntStateOf(0)
-    private var currentLives by mutableIntStateOf(userUseCase.getLives())
+    private var currentLives by mutableIntStateOf(0)
 
 
     fun startGame() {
+        currentGameId = userUseCase.getLevel()
+        currentLives = userUseCase.getLives()
         userUseCase.checkForUpdates()
         _state.update {
             it.copy(
@@ -96,13 +99,15 @@ class ColorTapViewModel(
         if (generatedGame.value?.colorsCharacters?.contains(emoji) == true || totalGuessed == totalColors) {
             totalGuessed++
             if (totalGuessed == totalColors) {
-                userUseCase.updateLevel(currentGameId)
                 currentGameId++
+                Log.d("kkk", "submitAnswer + $currentGameId ")
+                userUseCase.updateLevel(currentGameId)
             }
             _state.update {
                 it.copy(
                     pageState = if (totalColors == totalGuessed) PageState.Success else PageState.Loaded,
                     totalGuessedEmoji = it.totalGuessedEmoji + 1,
+                    level = currentGameId
                 )
             }
 

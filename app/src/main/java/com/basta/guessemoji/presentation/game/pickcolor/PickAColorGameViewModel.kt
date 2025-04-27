@@ -25,10 +25,12 @@ class PickAColorGameViewModel(
     private val _state = MutableStateFlow(PickAColorGameState(pageState = PageState.Loading))
     val state: StateFlow<PickAColorGameState> = _state.asStateFlow()
     private var generatedGame = mutableStateOf<GameEntry?>(null)
-    private var currentGameId by mutableIntStateOf(userUseCase.getLevel())
-    private var currentLives by mutableIntStateOf(userUseCase.getLives())
+    private var currentGameId by mutableIntStateOf(0)
+    private var currentLives by mutableIntStateOf(0)
 
     fun startGame() {
+        currentGameId = userUseCase.getLevel()
+        currentLives = userUseCase.getLives()
         userUseCase.checkForUpdates()
         _state.update {
             it.copy(

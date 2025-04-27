@@ -77,8 +77,8 @@ fun CongratsBox(correctColor: Color?, emojis: String? = null, text: String? = nu
                 .padding(top = 8.dp)
                 .fillMaxWidth(),
             onClick = nextAction,
-            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFFA500), contentColor = Color.Gray),
-            border = BorderStroke(1.dp, Color.LightGray),
+            colors = ButtonDefaults.buttonColors(containerColor = Color(0x92FFA500), contentColor = Color.Gray),
+            border = BorderStroke(1.dp, Color.White),
         ) {
             Text(text = stringResource(id = R.string.next_label))
         }

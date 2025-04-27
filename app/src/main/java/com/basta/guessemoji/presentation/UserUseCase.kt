@@ -2,48 +2,37 @@ package com.basta.guessemoji.presentation
 
 import com.basta.guessemoji.common.Constants.DEBUG_RENEW_LAST_SEEN_5_S
 import com.basta.guessemoji.domain.repository.UserPreferenceRepository
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 
-class UserUseCase(private val userRepo: UserPreferenceRepository, private val externalScope: CoroutineScope) {
-    operator fun invoke() {
-        externalScope.launch {
-            userRepo.initialize()
-        }
-    }
-
+class UserUseCase(private val userRepo: UserPreferenceRepository) {
     fun checkForUpdates() {
         val lastSeen = getLastSeen()
         if (DEBUG_RENEW_LAST_SEEN_5_S && isWithinLastXHours(lastSeen, 2)) {
-            updateLastSeen()
             updateLives(1)
         }
         when {
             isWithinLastXHours(lastSeen, 1) -> {
-                updateLastSeen()
                 updateLives(0)
             }
 
             isWithinLastXHours(lastSeen, 2) -> {
-                updateLastSeen()
                 updateLives(1)
             }
 
             isWithinLastXHours(lastSeen, 3) -> {
-                updateLastSeen()
                 updateLives(2)
             }
 
             else -> {
-                updateLastSeen()
                 updateLives(3)
             }
         }
+        updateLastSeen()
+        getUser()
     }
 
-    fun getLevel() = userRepo.getUser().level
+    fun getLevel() : Int = userRepo.getUser().level
 
-    fun getUser() = userRepo.getUser()
+    private fun getUser() = userRepo.getUser()
 
     fun updateLevel(level: Int) = userRepo.updateLevel(level)
 
@@ -53,15 +42,15 @@ class UserUseCase(private val userRepo: UserPreferenceRepository, private val ex
 
     fun updateCredits(credit: Int) = userRepo.updateCredits(credit)
 
-    fun getCredits() = userRepo.getUser().credit
+    fun getCredits() : Int = userRepo.getUser().credit
 
-    fun getLives() = userRepo.getUser().lives
+    fun getLives(): Int = userRepo.getUser().lives
 
-    fun hasBoughtTapGame() = userRepo.getUser().boughtTapGame
+    fun hasBoughtTapGame() : Boolean = userRepo.getUser().boughtTapGame
 
-    fun boughtTapGame() = userRepo.setBoughtTapGame("true")
+    fun boughtTapGame() = userRepo.setBoughtTapGame(true)
 
-    private fun getLastSeen() = userRepo.getUser().lastSeen
+    private fun getLastSeen() : Long = userRepo.getUser().lastSeen
 
     private fun updateLastSeen() = userRepo.updateLastSeen()
 
@@ -75,5 +64,4 @@ class UserUseCase(private val userRepo: UserPreferenceRepository, private val ex
         // Check if lastSeen is within the last 24 hours
         return lastSeenMillis in (currentTimeMillis - twentyFourHoursMillis)..currentTimeMillis
     }
-
 }

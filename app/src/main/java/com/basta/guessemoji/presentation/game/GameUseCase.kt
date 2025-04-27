@@ -32,7 +32,7 @@ class GameUseCase(
         val excludedColors = gameColors().filter { it != colorSelected }
 
         val colorsCharacters: List<String> = generateSingleColorEmojis(colorSelected).take(randomColorCount)
-        var restOfEmojis = excludedColors.map { generateSingleColorEmojis(it) }.flatten().take(TOTAL_SLIDER_ITEMS - randomColorCount)
+        val restOfEmojis = excludedColors.map { generateSingleColorEmojis(it) }.flatten().take(TOTAL_SLIDER_ITEMS - randomColorCount)
 
         return GameEntry(colors = listOf(colorSelected), characters = (restOfEmojis + colorsCharacters).shuffled(), colorsCharacters = colorsCharacters)
     }

@@ -32,6 +32,7 @@ import com.basta.guessemoji.common.Constants.PICK_COLOR_TIMER
 import com.basta.guessemoji.components.ColorAnswerPanel
 import com.basta.guessemoji.components.EmojiWithFill
 import com.basta.guessemoji.components.LottieAnimationLoader
+import com.basta.guessemoji.components.ads.PageAdBanner
 import com.basta.guessemoji.navigation.Directions
 import com.basta.guessemoji.presentation.game.ErrorType
 import com.basta.guessemoji.presentation.game.ui.InfoBox
@@ -101,6 +102,12 @@ fun PickAColorGamePage(
         ) {
 
             TimerBox(isVisibleTimer, timeCalculator)
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            PageAdBanner(R.string.pick_ad_banner)
+
+            Spacer(modifier = Modifier.height(8.dp))
 
             Spacer(modifier = Modifier.padding(top = 16.dp))
             when (state.value.pageState) {

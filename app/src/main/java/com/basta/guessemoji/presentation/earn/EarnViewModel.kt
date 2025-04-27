@@ -47,9 +47,9 @@ class EarnViewModel(
         }
     }
 
-    fun buyLives(amount: Int = 1, cost: Int = -REWARD_COINS) {
-        userUseCase.updateCredits(cost)
-        rewards += cost
+    fun buyLives(amount: Int = 1, cost: Int = REWARD_COINS) {
+        userUseCase.updateCredits(-cost)
+        rewards -= cost
         userUseCase.updateLives(amount)
         lives += amount
         viewModelScope.launch {
@@ -87,9 +87,9 @@ class EarnViewModel(
 
     fun showRewardedAd() {
         val onReward = { amount: Int ->
+            userUseCase.updateCredits(amount)
             rewards += amount
-            userUseCase.updateCredits(rewards)
-            _state.update { it.copy(totalEarned = rewards) }
+            _state.update { it.copy(totalEarned = rewards, lives = lives) }
         }
         rewardedAdHandler?.showAd(onReward)
     }

@@ -32,6 +32,7 @@ import com.basta.guessemoji.common.Constants.TAP_COLOR_TIMER
 import com.basta.guessemoji.components.EmojiSlideShow
 import com.basta.guessemoji.components.LivesAndAmountRow
 import com.basta.guessemoji.components.LottieAnimationLoader
+import com.basta.guessemoji.components.ads.PageAdBanner
 import com.basta.guessemoji.navigation.Directions
 import com.basta.guessemoji.presentation.game.ErrorType
 import com.basta.guessemoji.presentation.game.PageState
@@ -107,6 +108,10 @@ fun ColorTapGamePage(
         ) {
 
             TimerBox(isVisibleTimer, timeCalculator)
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            PageAdBanner(R.string.tap_ad_banner)
 
             Spacer(modifier = Modifier.padding(top = 16.dp))
             when (state.value.pageState) {

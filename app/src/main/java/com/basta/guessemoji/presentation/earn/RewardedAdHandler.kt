@@ -60,13 +60,13 @@ class RewardedAdHandler(private val activity: Activity) {
 
     fun showAd(onReward: (Int) -> Unit) {
         rewardedAd?.let { ad ->
-            ad.show(activity, OnUserEarnedRewardListener { rewardItem ->
+            ad.show(activity) { rewardItem ->
                 Log.d(
                     TAG,
                     "User earned the reward: Type=${rewardItem.type}, Amount=${rewardItem.amount}"
                 )
                 onReward(rewardItem.amount)
-            })
+            }
         } ?: run {
             Log.d(TAG, "The rewarded ad wasn't ready yet.")
         }

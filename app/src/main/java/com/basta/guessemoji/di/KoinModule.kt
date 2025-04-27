@@ -29,17 +29,11 @@ object KoinModule {
     private val useCaseModule: Module
         get() = module {
             factory { GameUseCase(get()) }
-            single { UserUseCase(get(), get()) }
+            single { UserUseCase(get()) }
         }
 
     private val viewModelModule: Module
         get() = module {
-//
-//            single<Activity> {
-//                val activity = (get<Application>() as GuessEmojiApplication).getActivityOrNull()
-//                activity ?: throw IllegalStateException("No active Activity found")
-//            }
-
             viewModel { PickAColorGameViewModel(get(), get()) }
             viewModel { MenuViewModel(get()) }
             viewModel { HomeViewModel(get()) }

@@ -1,5 +1,6 @@
 package com.basta.guessemoji.presentation.home
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -74,7 +75,9 @@ fun HomePage(
 
     OnLifecycleEvent { _, event ->
         when (event) {
-            Lifecycle.Event.ON_RESUME -> viewModel.setUp()
+            Lifecycle.Event.ON_RESUME -> {
+                viewModel.setUp()
+            }
             else -> {}
         }
     }
