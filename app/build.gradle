@@ -58,6 +58,7 @@ dependencies {
 
     // ads
     implementation("com.google.android.gms:play-services-ads:23.3.0")
+    implementation 'com.google.android.ump:user-messaging-platform:2.1.0'
     implementation 'com.github.fernando-rauber.mylibrary:advertising:1.5.4'
 
     implementation 'androidx.navigation:navigation-compose:2.8.1'

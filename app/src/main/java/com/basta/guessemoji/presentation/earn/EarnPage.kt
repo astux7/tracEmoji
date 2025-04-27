@@ -1,139 +1,374 @@
 package com.basta.guessemoji.presentation.earn
 
+import android.annotation.SuppressLint
 import android.app.Activity
-import android.content.Context
-import android.content.ContextWrapper
-import android.util.Log
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.navigation.NavController
 import com.basta.guessemoji.R
+import com.basta.guessemoji.common.Constants.MAX_LIVES
+import com.basta.guessemoji.common.Constants.REWARD_COINS
+import com.basta.guessemoji.common.Constants.UNLOCK_LEVEL2_COINS
+import com.basta.guessemoji.common.EmojiConstants.AD_WATCH_EMOJI
+import com.basta.guessemoji.common.EmojiConstants.BROKEN_HEART_EMOJI
+import com.basta.guessemoji.common.EmojiConstants.CART_EMOJI
+import com.basta.guessemoji.common.EmojiConstants.COIN_EMOJI
+import com.basta.guessemoji.common.EmojiConstants.FAIL_EMOJI
+import com.basta.guessemoji.common.EmojiConstants.HEART_EMOJI
+import com.basta.guessemoji.common.EmojiConstants.LIGHT_BULB_EMOJI
+import com.basta.guessemoji.common.EmojiConstants.MARKED_EMOJI
+import com.basta.guessemoji.common.EmojiConstants.PLAY_EMOJI
+import com.basta.guessemoji.common.EmojiConstants.TIME_EMOJI
+import com.basta.guessemoji.common.EmojiConstants.UNLOCKED_EMOJI
+import com.basta.guessemoji.navigation.Directions
+import com.basta.guessemoji.presentation.ui.BackButton
+import com.basta.guessemoji.ui.theme.ButtonBorder
 import com.basta.guessemoji.ui.theme.borderColor
-import com.google.android.gms.ads.AdError
-import com.google.android.gms.ads.AdRequest
-import com.google.android.gms.ads.FullScreenContentCallback
-import com.google.android.gms.ads.LoadAdError
-import com.google.android.gms.ads.OnUserEarnedRewardListener
-import com.google.android.gms.ads.rewarded.RewardedAd
-import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
+import org.koin.androidx.compose.getViewModel
 
+@SuppressLint("StateFlowValueCalledInComposition")
 @Composable
 fun EarnPage(
     navController: NavController = NavController(LocalContext.current),
     paddingValues: PaddingValues,
-  //  viewModel: SettingsViewModel = getViewModel(),
+    viewModel: EarnViewModel = getViewModel(),
 ) {
-    var rewardedAd: RewardedAd? = null
+    val lifecycleOwner = LocalLifecycleOwner.current
     val context = LocalContext.current
+    val activity = context as? Activity
+    val adUnitId = stringResource(id = R.string.reward_ad_two)
 
-    var TAG = "Reward1"
+    val state = viewModel.state.collectAsState()
 
-        var adRequest = AdRequest.Builder().build()
-        RewardedAd.load(context, stringResource(id = R.string.reward_ad_one), adRequest, object : RewardedAdLoadCallback() {
-            override fun onAdFailedToLoad(adError: LoadAdError) {
-                Log.d(TAG, adError.toString())
-                rewardedAd = null
+    LaunchedEffect(Unit) {
+        viewModel.setUp(activity)
+    }
+
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                viewModel.loadRewardedAd(adUnitId)
             }
-
-            override fun onAdLoaded(ad: RewardedAd) {
-                Log.d(TAG, "Ad was loaded.")
-                rewardedAd = ad
-            }
-        })
-
-    rewardedAd?.fullScreenContentCallback = object: FullScreenContentCallback() {
-        override fun onAdClicked() {
-            // Called when a click is recorded for an ad.
-            Log.d(TAG, "Ad was clicked.")
         }
-
-        override fun onAdDismissedFullScreenContent() {
-            // Called when ad is dismissed.
-            // Set the ad reference to null so you don't show the ad a second time.
-            Log.d(TAG, "Ad dismissed fullscreen content.")
-            rewardedAd = null
-        }
-
-        override fun onAdFailedToShowFullScreenContent(p0: AdError) {
-            // Called when ad fails to show.
-            Log.e(TAG, "Ad failed to show fullscreen content.")
-            rewardedAd = null
-        }
-
-        override fun onAdImpression() {
-            // Called when an impression is recorded for an ad.
-            Log.d(TAG, "Ad recorded an impression.")
-        }
-
-        override fun onAdShowedFullScreenContent() {
-            // Called when ad is shown.
-            Log.d(TAG, "Ad showed fullscreen content.")
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
         }
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(paddingValues),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Top,
-    ) {
-
-
-        Text(text = "Reward 1: \uD83E\uDE99 5", modifier = Modifier
-            .fillMaxWidth()
-            .padding(8.dp)
-            .border(width = 2.dp, color = borderColor)
-            .padding(8.dp)
-            .clickable {
-                rewardedAd?.let { ad ->
-                    ad.show(context.getActivityOrNull()!!, OnUserEarnedRewardListener { rewardItem ->
-                        // Handle the reward.
-                        val rewardAmount = rewardItem.amount
-                        val rewardType = rewardItem.type
-                        Log.d(TAG, "User earned the reward. $rewardAmount $rewardType")
-                    })
-                } ?: run {
-                    Log.d(TAG, "The rewarded ad wasn't ready yet.")
+    Box(Modifier.fillMaxSize()) {
+        Column(
+            modifier = Modifier
+                .verticalScroll(rememberScrollState())
+                .fillMaxSize()
+                .padding(paddingValues)
+                .padding(horizontal = 0.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Top
+        ) {
+            Box(
+                modifier = Modifier
+                    .padding(top = 40.dp)
+                    .fillMaxWidth()
+                    .padding(horizontal = 64.dp)
+                    .border(
+                        BorderStroke(2.dp, ButtonBorder),
+                        shape = RoundedCornerShape(16.dp)
+                    )
+                    .clip(RoundedCornerShape(16.dp))
+                    .background(borderColor)
+                    .padding(16.dp),
+                contentAlignment = Alignment.TopCenter
+            ) {
+                Column {
+                    Text(
+                        stringResource(id = R.string.your_rewards_label),
+                        Modifier.fillMaxWidth(),
+                        fontSize = 20.sp,
+                        textAlign = TextAlign.Center,
+                        fontWeight = FontWeight.W700,
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Text(
+                        stringResource(
+                            id = R.string.total_money_label,
+                            state.value.totalEarned.toString(),
+                            COIN_EMOJI,
+                        ),
+                        fontWeight = FontWeight.W700,
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Text(
+                        stringResource(
+                            id = R.string.your_rewards_info_text_label,
+                            LIGHT_BULB_EMOJI
+                        ), fontSize = 10.sp
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Text(
+                        stringResource(
+                            id = R.string.your_rewards_lives_info_text_label,
+                            HEART_EMOJI
+                        ), fontSize = 10.sp
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
                 }
-            })
-        Text(text = "Reward 2: \uD83E\uDE99 5", modifier = Modifier
-            .fillMaxWidth()
-            .padding(8.dp)
-            .border(width = 2.dp, color = borderColor)
-            .padding(8.dp)
-            .clickable { })
-        Text(text = "Reward 3: \uD83E\uDE99 5", modifier = Modifier
-            .fillMaxWidth()
-            .padding(8.dp)
-            .border(width = 2.dp, color = borderColor)
-            .padding(8.dp)
-            .clickable { })
+            }
 
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
+                    .padding(top = 16.dp)
+                    .clip(RoundedCornerShape(15))
+                    .border(width = 1.dp, color = borderColor, shape = RoundedCornerShape(15))
+                    .background(borderColor)
+                    .padding(8.dp),
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column(Modifier.weight(1f)) {
+                    Text(
+                        text = stringResource(id = R.string.watch_ad_label, AD_WATCH_EMOJI),
+                    )
+                    Text(
+                        text = stringResource(
+                            id = R.string.reward_x_label,
+                            REWARD_COINS,
+                            COIN_EMOJI
+                        ),
+                        fontSize = 10.sp,
+                    )
+                }
+                Box(modifier = Modifier.weight(1f), contentAlignment = Alignment.CenterEnd) {
+                    when (state.value.isAdReady) {
+                        AdStatus.READY -> {
+                            Text(
+                                text = stringResource(id = R.string.play_ad_label, PLAY_EMOJI),
+                                modifier = Modifier
+                                    .padding(4.dp)
+                                    .clip(RoundedCornerShape(4.dp))
+                                    .border(
+                                        width = 1.dp,
+                                        color = ButtonBorder,
+                                        shape = RoundedCornerShape(4.dp)
+                                    )
+                                    .background(MaterialTheme.colorScheme.background)
+                                    .padding(8.dp)
+                                    .clickable { viewModel.showRewardedAd() },
+                                textAlign = TextAlign.End,
+                                color = MaterialTheme.colorScheme.onSurface
+                            )
+                        }
+
+                        AdStatus.FAILED -> {
+                            Text(
+                                text = stringResource(id = R.string.ad_error_label, FAIL_EMOJI),
+                                modifier = Modifier.fillMaxWidth(),
+                                color = Color.Red,
+                                fontSize = 10.sp,
+                                textAlign = TextAlign.End
+                            )
+                        }
+
+                        AdStatus.LOADING -> {
+                            Text(
+                                text = stringResource(id = R.string.ad_loading_label, TIME_EMOJI),
+                                modifier = Modifier.fillMaxWidth(),
+                                fontSize = 10.sp,
+                                textAlign = TextAlign.End
+                            )
+                        }
+                    }
+                }
+            }
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
+                    .padding(top = 16.dp)
+                    .clip(RoundedCornerShape(15))
+                    .border(width = 1.dp, color = borderColor, shape = RoundedCornerShape(15))
+                    .background(borderColor)
+                    .padding(8.dp),
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column(Modifier.weight(1f)) {
+                    Text(
+                        text = stringResource(
+                            id = R.string.lives_text_label,
+                            if (state.value.lives > 0) HEART_EMOJI else BROKEN_HEART_EMOJI,
+                            state.value.lives,
+                            MAX_LIVES
+                        ),
+                    )
+                    Text(
+                        text = "One live cost $REWARD_COINS $COIN_EMOJI",
+                        fontSize = 10.sp,
+                    )
+                }
+
+
+                Box(modifier = Modifier.weight(1f), contentAlignment = Alignment.CenterEnd) {
+                    if (state.value.lives < MAX_LIVES) {
+                        if (state.value.totalEarned.toInt() >= REWARD_COINS)
+                        Text(
+                            text = stringResource(id = R.string.buy_label, CART_EMOJI),
+                            modifier = Modifier
+                                .padding(4.dp)
+                                .clip(RoundedCornerShape(4.dp))
+                                .border(
+                                    width = 1.dp,
+                                    color = ButtonBorder,
+                                    shape = RoundedCornerShape(4.dp)
+                                )
+                                .background(MaterialTheme.colorScheme.background)
+                                .padding(8.dp)
+                                .clickable(
+                                    enabled = viewModel.state.value.lives < MAX_LIVES && viewModel.state.value.totalEarned >= REWARD_COINS,
+                                    onClick = { viewModel.buyLives() }),
+                            textAlign = TextAlign.End,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                        else
+                            Text(
+                                text = stringResource(
+                                    id = R.string.missing_label,
+                                    REWARD_COINS,
+                                    COIN_EMOJI
+                                ),
+                                modifier = Modifier
+                                    .padding(4.dp)
+                                    .padding(8.dp)
+                                    .clickable(
+                                        enabled = false, onClick = {}),
+                                textAlign = TextAlign.End,
+                                fontSize = 10.sp,
+                                color = MaterialTheme.colorScheme.onBackground
+                            )
+
+                    } else {
+                        Text(
+                            text = MARKED_EMOJI,
+                            modifier = Modifier
+                                .padding(4.dp)
+                                .clip(RoundedCornerShape(4.dp))
+                                .padding(8.dp)
+                                .clickable(
+                                    enabled = false, onClick = {}),
+                            textAlign = TextAlign.End,
+                            color = MaterialTheme.colorScheme.onBackground
+                        )
+                    }
+                }
+            }
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+                    .clip(RoundedCornerShape(15))
+                    .border(width = 1.dp, color = borderColor, shape = RoundedCornerShape(15))
+                    .background(borderColor)
+                    .padding(8.dp),
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
+
+                Column(Modifier.weight(1f)) {
+                    Text(
+                        text = stringResource(id = R.string.unlock_level_2_game, UNLOCKED_EMOJI),
+                        textAlign = TextAlign.Start
+                    )
+                    Text(
+                        text = "Unlock the game cost $UNLOCK_LEVEL2_COINS $COIN_EMOJI",
+                        fontSize = 10.sp,
+                    )
+                }
+
+                Box(modifier = Modifier.weight(1f), contentAlignment = Alignment.CenterEnd) {
+                    when {
+                        viewModel.state.value.hasBoughtTapGame -> {
+                            Text(
+                                text = MARKED_EMOJI,
+                                modifier = Modifier
+                                    .padding(4.dp)
+                                    .clip(RoundedCornerShape(4.dp))
+                                    .padding(8.dp)
+                                    .clickable(
+                                        enabled = false, onClick = {}),
+                                textAlign = TextAlign.End,
+                                color = MaterialTheme.colorScheme.onBackground
+                            )
+                        }
+                        viewModel.state.value.totalEarned >= UNLOCK_LEVEL2_COINS -> {
+                            Text(
+                                text = stringResource(
+                                    id = R.string.buy_label,
+                                    CART_EMOJI
+                                ),
+                                color = MaterialTheme.colorScheme.onSurface,
+                                modifier = Modifier
+                                    .padding(4.dp)
+                                    .clip(RoundedCornerShape(4.dp))
+                                    .border(
+                                        width = 1.dp,
+                                        color = ButtonBorder,
+                                        shape = RoundedCornerShape(4.dp)
+                                    )
+                                    .background(MaterialTheme.colorScheme.background)
+                                    .padding(8.dp)
+                                    .clickable(
+                                        enabled = viewModel.state.value.totalEarned >= UNLOCK_LEVEL2_COINS,
+                                        onClick = { viewModel.boughtTapGame() }),
+                                textAlign = TextAlign.End
+                            )
+                        }
+                        else -> {
+                            val shortMoney = UNLOCK_LEVEL2_COINS - viewModel.state.value.totalEarned
+                            Text(
+                                text = stringResource(
+                                    id = R.string.missing_label,
+                                    shortMoney,
+                                    COIN_EMOJI
+                                ),
+                                modifier = Modifier
+                                    .padding(4.dp)
+                                    .padding(8.dp)
+                                    .clickable(
+                                        enabled = false, onClick = {}),
+                                textAlign = TextAlign.End,
+                                fontSize = 10.sp,
+                                color = MaterialTheme.colorScheme.onBackground
+                            )
+                        }
+                    }
+                }
+            }
+        }
+        BackButton { navController.navigate(Directions.home.name) }
     }
-
-
-}
-
-fun Context.getActivityOrNull(): Activity? {
-    var context = this
-    while (context is ContextWrapper) {
-        if (context is Activity) return context
-        context = context.baseContext
-    }
-
-    return null
 }

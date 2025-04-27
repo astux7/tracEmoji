@@ -1,0 +1,99 @@
+package com.basta.guessemoji.presentation.game.ui
+
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.basta.guessemoji.R
+import com.basta.guessemoji.common.utils.toEmoji
+import com.basta.guessemoji.components.EmojiWithFill
+
+@Composable
+fun FailBox(title: String, color: Color?, emojis: String? = null, text: String? = null,  nextAction: () -> Unit) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth(0.8f)
+            .clip(RoundedCornerShape(16.dp))
+            .background(
+                brush = Brush.verticalGradient(
+                    colors = listOf(Color.Red, Color(0xFFFFA500)) // Orange color
+                )
+            )
+            .border(2.dp, Color.White, RoundedCornerShape(16.dp))
+            .padding(20.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Top
+    ) {
+        Text(
+            text = title,
+            fontSize = 24.sp,
+            fontWeight = FontWeight.Bold,
+            color = Color.White,
+            modifier = Modifier.padding(bottom = 32.dp)
+        )
+
+        emojis?.let {
+            EmojiWithFill(emojis)
+        }
+
+        color?.let {
+            Text(
+                text = stringResource(id = R.string.game_wrong_answer, color.toEmoji()),
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.LightGray,
+                modifier = Modifier.padding(vertical = 16.dp)
+            )
+        }
+
+        text?.let {
+            Text(
+                text = text,
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.LightGray,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(vertical = 16.dp)
+            )
+        }
+
+        Button(
+            modifier = Modifier
+                .padding(top = 8.dp)
+                .fillMaxWidth(),
+            onClick = nextAction,
+            colors = ButtonDefaults.buttonColors(containerColor = Color.Red, contentColor = Color.White),
+            border = BorderStroke(1.dp, Color.LightGray),
+        ) {
+            Text(text = stringResource(id = R.string.next_label))
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun FailBoxPreview() {
+    Surface(Modifier.fillMaxWidth(), color = Color.Blue) {
+        FailBox(title = "Title", color = null, emojis = "") {}
+    }
+}

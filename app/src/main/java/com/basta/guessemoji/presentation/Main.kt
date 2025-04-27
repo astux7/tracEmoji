@@ -20,7 +20,7 @@ fun MainScreen() {
     ) { padding ->
         NavHost(
             navController = navController,
-            startDestination = Directions.play.name,
+            startDestination = Directions.home.name,
         ) {
             buildTheGraph(navController, padding)
         }

@@ -4,38 +4,49 @@ import com.basta.guessemoji.data.GameRepositoryImpl
 import com.basta.guessemoji.data.UserPreferenceRepositoryImp
 import com.basta.guessemoji.domain.repository.GameRepository
 import com.basta.guessemoji.domain.repository.UserPreferenceRepository
+import com.basta.guessemoji.presentation.UserUseCase
+import com.basta.guessemoji.presentation.earn.EarnViewModel
 import com.basta.guessemoji.presentation.game.GameUseCase
-import com.basta.guessemoji.presentation.game.GameViewModel
-import com.basta.guessemoji.presentation.settings.SettingsViewModel
+import com.basta.guessemoji.presentation.game.colortap.ColorTapViewModel
+import com.basta.guessemoji.presentation.game.pickcolor.PickAColorGameViewModel
+import com.basta.guessemoji.presentation.menu.MenuViewModel
+import com.basta.guessemoji.presentation.home.HomeViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.module.Module
 import org.koin.dsl.module
 
 object KoinModule {
-
     fun allModule(): List<Module> =
         listOf(
+            dataModule,
             useCaseModule,
             viewModelModule,
-            dataModule
         )
 
     private val useCaseModule: Module
         get() = module {
             factory { GameUseCase(get()) }
+            single { UserUseCase(get()) }
         }
 
     private val viewModelModule: Module
         get() = module {
-            viewModel { SettingsViewModel() }
-            viewModel { GameViewModel(get()) }
+            viewModel { PickAColorGameViewModel(get(), get()) }
+            viewModel { MenuViewModel(get()) }
+            viewModel { HomeViewModel(get()) }
+            viewModel { EarnViewModel(get()) }
+            viewModel { ColorTapViewModel(get(), get()) }
         }
 
     private val dataModule: Module
         get() = module {
-            single<GameRepository> { GameRepositoryImpl() }
-            single<UserPreferenceRepository> {
-                UserPreferenceRepositoryImp(get(), get())
+            single<UserPreferenceRepository> { UserPreferenceRepositoryImp(get(), get()) }
+            single<CoroutineScope> {
+                CoroutineScope(SupervisorJob() + Dispatchers.IO)
             }
+            single<GameRepository> { GameRepositoryImpl() }
         }
 }

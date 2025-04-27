@@ -10,7 +10,7 @@ object GameColor {
             characters = listOf(
                 "🐥",   // Baby Chick
                 "🧀",   // Cheese Wedge
-                "🌼",   // Blossom
+              //  "🌼",   // Blossom
                 "🌟",   // Glowing Star
                 "🍌",   // Banana
                 "🌤️",   // Sun Behind Small Cloud
@@ -29,10 +29,10 @@ object GameColor {
                 "🚩",   // Triangular Flag
                 "❤️",   // Red Heart
                 "📌",   // Pushpin
-                "🎀",   // Ribbon
+            //    "🎀",   // Ribbon
                 "👠",   // High-Heeled Shoe
                 "🥩",   // Cut of Meat
-                "🧨",   // Firecracker
+              //  "🧨",   // Firecracker
                 "🏮",   // Red Lantern
                 "🦐",   // Shrimp
                 "🦩",   // Flamingo
@@ -46,7 +46,7 @@ object GameColor {
                 "🐋",   // Whale
                 "🐟",   // Fish
                 "🐬",   // Dolphin
-                "🦋",   // Butterfly
+          //      "🦋",   // Butterfly
                 "🌀",   // Cyclone
                 "🌊",   // Water Wave
                 "💧",   // Droplet
@@ -77,15 +77,15 @@ object GameColor {
                 "🍀",  // Four Leaf Clover
                 "🌲",  // Evergreen Tree
                 "🌳",  // Deciduous Tree
-                "🪴",  // Potted Plant
+//                "🪴",  // Potted Plant
                 "🦎",  // Lizard
                 "🦖",  // T-Rex
                 "🧩",  // puzzle
                 "🦠",   // Microbe
                 "🪲",  // Beetle
-                "🫛",   // Peas
+//                "🫛",   // Peas
                 "🌱",   // Seedling
-                "🍃",   // Leaf
+//                "🍃",   // Leaf
                 "🐉",   // dragon
             ),
         ),

@@ -43,14 +43,15 @@ val GameColorPalette = listOf(
     Color(0xFF00BFFF), // Deep Sky Blue
     Color(0xFFB22222), // Firebrick Red
     Color(0xFFFFFFF0), // Moonlight White
-    Color(0xFFFF5722), // Moonlight White
+    Color(0x8D979794), // Greyish white
+    Color(0xFFFF5722), // Orange
 )
 
 private val DarkColorScheme = darkColorScheme(
     background = GameColorPalette[0], // Deep Charcoal
     surface = GameColorPalette[4], // Light Sky Blue
     onSurface = GameColorPalette[7], // Deep Purple for text
-    onBackground = Color.White // White text on deep background
+    onBackground = GameColorPalette[9] // White text on deep background
 //    primary = Color(0xFF1DA1F2),  // Sky Blue
 //    onPrimary = Color.White,
 //    secondary = Color(0xFF536DFE),  // Indigo
@@ -65,6 +66,9 @@ private val DarkColorScheme = darkColorScheme(
 val borderColor = GameColorPalette[1] // Purple for the border
 val clockColor = GameColorPalette.last() // Purple for the border
 val MenuColor = GameColorPalette[5]
+val ButtonBorder = Color(0x80BEC0BD)
+
+
 @Composable
 fun MyApplicationTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),

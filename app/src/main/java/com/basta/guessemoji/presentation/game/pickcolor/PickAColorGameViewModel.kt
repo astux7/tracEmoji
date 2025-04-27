@@ -1,4 +1,4 @@
-package com.basta.guessemoji.presentation.game
+package com.basta.guessemoji.presentation.game.pickcolor
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -6,51 +6,86 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
+import com.basta.guessemoji.domain.model.CreditType
 import com.basta.guessemoji.domain.model.GameEntry
+import com.basta.guessemoji.presentation.UserUseCase
+import com.basta.guessemoji.presentation.game.ErrorType
+import com.basta.guessemoji.presentation.game.GameUseCase
+import com.basta.guessemoji.presentation.game.PageState
+import com.basta.guessemoji.presentation.game.PickAColorGameState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
-class GameViewModel(
-    private val useCase: GameUseCase
+class PickAColorGameViewModel(
+    private val gameUseCase: GameUseCase,
+    private val userUseCase: UserUseCase,
 ) : ViewModel() {
-    private val _state = MutableStateFlow(GameState(pageState = PageState.Loading))
-    val state: StateFlow<GameState> = _state.asStateFlow()
+    private val _state = MutableStateFlow(PickAColorGameState(pageState = PageState.Loading))
+    val state: StateFlow<PickAColorGameState> = _state.asStateFlow()
     private var generatedGame = mutableStateOf<GameEntry?>(null)
     private var currentGameId by mutableIntStateOf(0)
+    private var currentLives by mutableIntStateOf(0)
 
     fun startGame() {
+        currentGameId = userUseCase.getLevel()
+        currentLives = userUseCase.getLives()
+        userUseCase.checkForUpdates()
         _state.update {
             it.copy(
                 pageState = PageState.Start,
                 errorType = null,
                 message = null,
-                level = currentGameId + 1
+                level = currentGameId + 1,
+                lives = currentLives
+            )
+        }
+    }
+
+    private fun noLivesGame() {
+        _state.update {
+            it.copy(
+                pageState = PageState.Start,
+                errorType = null,
+                message = null,
+                level = currentGameId,
+                lives = currentLives
             )
         }
     }
 
     fun loadGame() {
-        generatedGame.value = useCase.generateSingleExclusionColorGame()
-        _state.update {
-            it.copy(
-                pageState = PageState.Loaded,
-                errorType = null,
-                message = null,
-                level = currentGameId + 1,
-                emojis = generatedGame.value?.characters ?: emptyList()
-            )
-        }
+        if (currentLives > 0) {
+            generatedGame.value = gameUseCase.generateSingleExclusionColorGame()
+            _state.update {
+                it.copy(
+                    pageState = PageState.Loaded,
+                    errorType = null,
+                    message = null,
+                    level = currentGameId + 1,
+                    lives = currentLives,
+                    emojis = generatedGame.value?.characters ?: emptyList()
+                )
+            }
+        } else noLivesGame()
+    }
+
+    fun removeLive() { // back button
+        userUseCase.removeLive(1)
+        currentLives--
     }
 
     fun gameTimeOut() {
+        userUseCase.removeLive(1)
+        currentLives--
         _state.update {
             it.copy(
                 pageState = PageState.End,
                 errorType = null,
                 message = null,
                 level = currentGameId,
+                lives = currentLives,
                 emojis = generatedGame.value?.characters ?: emptyList(),
             )
         }
@@ -59,6 +94,7 @@ class GameViewModel(
     fun submitAnswer(color: Color) {
         if (color == generatedGame.value?.colors?.first()) {
             currentGameId++
+            userUseCase.updateLevel(currentGameId)
             _state.update {
                 it.copy(
                     pageState = PageState.Success,
@@ -70,12 +106,15 @@ class GameViewModel(
             }
 
         } else {
+            userUseCase.removeLive(1)
+            currentLives--
             _state.update {
                 it.copy(
                     pageState = PageState.Error,
                     errorType = ErrorType.BadAnswer,
                     message = null,
                     level = currentGameId,
+                    lives = currentLives,
                     emojis = generatedGame.value?.characters ?: emptyList()
                 )
             }

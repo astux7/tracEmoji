@@ -1,8 +1,14 @@
 package com.basta.guessemoji.domain.repository
 
+import com.basta.guessemoji.domain.model.User
+
 interface UserPreferenceRepository {
-    suspend fun getUser(): Int
-    suspend fun addCredits(credit: Int)
-    suspend fun removeCredits(credit: Int)
+    fun getUser(): User
+    fun updateCredits(credit: Int, isFirstTime: Boolean = false)
+    fun updateLevel(level: Int)
+    fun updateLastSeen()
+    fun updateLives(lives: Int, isFirstTime: Boolean = false)
+    fun removeLives(lives: Int)
     fun wipeData()
+    fun setBoughtTapGame(value: Boolean)
 }
